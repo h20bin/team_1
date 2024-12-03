@@ -41,10 +41,10 @@ public class Character extends JPanel implements ActionListener {
                 int key = e.getKeyCode();
 
                 // 이동 방향 설정
-                if (key == KeyEvent.VK_W) dy = -1;  // 위쪽
-                if (key == KeyEvent.VK_S) dy = 1;   // 아래쪽
-                if (key == KeyEvent.VK_A) dx = -1;  // 왼쪽
-                if (key == KeyEvent.VK_D) dx = 1;   // 오른쪽
+                if (key == KeyEvent.VK_UP) dy = -1;  // 위쪽
+                if (key == KeyEvent.VK_DOWN) dy = 1;   // 아래쪽
+                if (key == KeyEvent.VK_LEFT) dx = -1;  // 왼쪽
+                if (key == KeyEvent.VK_RIGHT) dx = 1;   // 오른쪽
 
                 // 키가 눌릴 때마다 속도 증가
                 isKeyPressed = true;
@@ -56,8 +56,8 @@ public class Character extends JPanel implements ActionListener {
                 int key = e.getKeyCode();
 
                 // 키가 떼어지면 해당 방향의 이동 멈추기
-                if (key == KeyEvent.VK_W || key == KeyEvent.VK_S) dy = 0; // 상하 이동 멈춤
-                if (key == KeyEvent.VK_A || key == KeyEvent.VK_D) dx = 0; // 좌우 이동 멈춤
+                if (key == KeyEvent.VK_UP || key == KeyEvent.VK_DOWN) dy = 0; // 상하 이동 멈춤
+                if (key == KeyEvent.VK_LEFT || key == KeyEvent.VK_RIGHT) dx = 0; // 좌우 이동 멈춤
 
                 // 키가 떼어졌음을 표시하고 시간을 기록
                 isKeyPressed = false;

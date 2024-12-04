@@ -16,12 +16,12 @@ class StageSelection {
     public StageSelection() {
         frame = new JFrame("Stage Selection");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.setSize(600, 587);
+        frame.setSize(360, 576);
         frame.setLayout(null);
 
         
         JLabel background = new JLabel(new ImageIcon("GameStart/src/hehe.jpg"));
-        background.setBounds(0, 0, 600, 587);
+        background.setBounds(0, 0, 360, 576);
         frame.add(background);
 
         // 타이틀
@@ -40,7 +40,7 @@ class StageSelection {
         stage1Button.addActionListener(e -> openGameWindow(1));
         stage2Button.addActionListener(e -> openGameWindow(2));
         stage3Button.addActionListener(e -> openGameWindow(3));
-        stage4Button.addActionListener(e->openGameWindow(4));
+        stage4Button.addActionListener(e -> openGameWindow(4));
         
         background.add(stage1Button);
         background.add(stage2Button);

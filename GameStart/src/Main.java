@@ -20,7 +20,7 @@ class StageSelection {
         frame.setLayout(null);
 
         
-        JLabel background = new JLabel(new ImageIcon("res/hehe.jpg"));
+        JLabel background = new JLabel(new ImageIcon("GameStart/src/hehe.jpg"));
         background.setBounds(0, 0, 600, 587);
         frame.add(background);
 

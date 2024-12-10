@@ -10,7 +10,7 @@ public class GameManager {
         player = Player.getInstance(); // Singleton Player
         frame = new JFrame("Shooting Game");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.setSize(400, 600);
+        frame.setSize(512, 768);
         frame.setResizable(false);
 
         // Load the title panel initially

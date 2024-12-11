@@ -2,10 +2,12 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.FileInputStream;
 
 public class TitlePanel extends JPanel {
     private GameManager manager;
     private ImageIcon backgroundImageIcon;
+    private Thread musicThread; // 배경 음악을 재생할 스레드
 
     public TitlePanel(GameManager manager) {
         this.manager = manager;
@@ -15,7 +17,10 @@ public class TitlePanel extends JPanel {
         
         JButton startButton = new JButton("Start");
         startButton.setBounds(180, 150, 100, 50);
-        startButton.addActionListener(e -> manager.switchPanel(new LobbyPanel(manager)));
+        startButton.addActionListener(e -> {
+        	stopBackgroundMusic();
+        	manager.switchPanel(new LobbyPanel(manager));
+        });
         add(startButton);
 
         JButton resetButton = new JButton("Reset");
@@ -24,6 +29,9 @@ public class TitlePanel extends JPanel {
             manager.getPlayer().addGold(-manager.getPlayer().getGold());
             System.out.println("Game Reset!");
         });
+        
+        startBackgroundMusic();
+        
         add(resetButton);
         
         JButton exitButton = new JButton("Exit");
@@ -63,4 +71,26 @@ public class TitlePanel extends JPanel {
         g.drawString(titleText, x, y); // 텍스트 그리기
         // Render background or animations
     }
+    
+    private void startBackgroundMusic() {
+        musicThread = new Thread(() -> {
+            try {
+                String musicFilePath = "GameStart/src/backgroundmusic.mp3"; // 경로 설정
+                FileInputStream fileInputStream = new FileInputStream(musicFilePath);
+                Player player = new Player(fileInputStream);
+                player.play(); // 음악 재생
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        });
+        musicThread.start();
+    }
+
+    // 배경 음악을 중지하는 메서드
+    private void stopBackgroundMusic() {
+        if (musicThread != null && musicThread.isAlive()) {
+            musicThread.interrupt();
+        }
+    }
+
 }

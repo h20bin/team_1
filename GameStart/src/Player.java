@@ -1,22 +1,37 @@
-import java.awt.*;
+import java.awt.Graphics;
+import java.awt.Rectangle;
+import java.awt.image.BufferedImage;
+import java.io.IOException;
 
-public class Player {
-    private static Player instance;
-    private int x, y; // 플레이어의 위치
-    int maxHP;
-    int currentHP;
+public class Player extends Character {
+    private static Player instance; // 싱글톤 인스턴스
+
+    private int maxHP;
+    private int currentHP;
     private int gold;
-    Weapon weapon;
-    public double maxSpeed;
-    public double attackCycle;
 
     private Player() {
-        this.x = 180; // 초기 위치 설정
-        this.y = 500; // 초기 위치 설정
-        this.maxHP = 100;
-        this.currentHP = maxHP;
-        this.gold = 0;
-        this.weapon = new Weapon(1, 10, 3); // 초기 무기 설정
+        super(0, 0, null, null); // 기본값 설정
+
+        try {
+            // 스프라이트 및 무기 데이터 로드
+            BufferedImage[] playerSprites = loadSpriteSheet("/Character/body-Sheet1.png", 72, 72);
+            BufferedImage[] weaponSprites = loadSpriteSheet("/Weapon/weapon-Sheet1.png", 72, 72);
+            BufferedImage[] bulletFrames = loadSpriteSheet("/Weapon/bullet-Sheet1.png", 6, 4);
+
+            Weapon defaultWeapon = new Weapon(weaponSprites[0], 3, 10, 5, bulletFrames);
+
+            // 초기 상태 설정
+            this.sprite = playerSprites[0];
+            this.weapon = defaultWeapon;
+
+        } catch (IOException e) {
+            e.printStackTrace();
+            System.err.println("Failed to load player or weapon assets.");
+        }
+
+        // 초기 상태 기본값
+        reset();
     }
 
     public static Player getInstance() {
@@ -26,9 +41,15 @@ public class Player {
         return instance;
     }
 
-    public void attack() {
+    public void reset() {
+        // 초기화 로직
+        this.x = 100;
+        this.y = 100;
+        this.maxHP = 100;
+        this.currentHP = maxHP;
+        this.gold = 0;
         if (weapon != null) {
-            weapon.shoot();
+            weapon.reset(); // 무기 초기화
         }
     }
 
@@ -43,42 +64,68 @@ public class Player {
         gold += amount;
     }
 
+    @Override
+    public void move(int dx, int dy) {
+        x += dx;
+        y += dy;
+    }
+
+    @Override
+    public void render(Graphics g) {
+        super.render(g);
+    }
+
+    public int getMaxHP() {
+        return maxHP;
+    }
+
+    public int getCurrentHP() {
+        return currentHP;
+    }
+
     public int getGold() {
         return gold;
     }
 
-    public int getCurrentHP() {
-        return currentHP; // 현재 HP 반환
+    public void reduceAttackCycle(double amount) {
+        if (weapon != null) {
+            weapon.reduceFireRate(amount);
+        }
     }
 
-    public int getX() {
-        return x; // x 좌표 반환
+    public void increaseMaxHP(int d) {
+        maxHP += d;
+        currentHP = maxHP;
     }
 
+    public Weapon getWeapon() {
+        return weapon;
+    }
+
+    @Override
     public int getY() {
-        return y; // y 좌표 반환
+        return y;
     }
 
-    public void move(int dx, int dy) {
-        this.x += dx; // x 좌표 변경
-        this.y += dy; // y 좌표 변경
+    @Override
+    public int getX() {
+        return x;
     }
 
     public Rectangle getBounds() {
-        return new Rectangle(x, y, 40, 40); // 플레이어의 위치와 크기 반환
+        return new Rectangle(x, y, 40, 40);
     }
 
-    public void render(Graphics g) {
-        g.setColor(Color.BLUE);
-        g.fillRect(x, y, 40, 40); // x, y 위치에 플레이어 그리기
+    public void setWeapon(Weapon weapon) {
+        this.weapon = weapon;
     }
-    
-    public void reset() {
-        this.x = 180; // 초기 위치 설정
-        this.y = 500; // 초기 위치 설정
-        this.maxHP = 100;
-        this.currentHP = maxHP;
-        this.gold = 0;
-        this.weapon = new Weapon(1, 10, 3);
+
+    // 유틸리티 메서드: 스프라이트 시트를 로드합니다.
+    private BufferedImage[] loadSpriteSheet(String resourcePath, int frameWidth, int frameHeight) throws IOException {
+        return new SpriteSheet(resourcePath, frameWidth, frameHeight).getAllFrames();
     }
+
+	public void increaseMaxHP(double d) {
+		this.maxHP += d;
+	}
 }

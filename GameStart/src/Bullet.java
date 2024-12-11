@@ -1,48 +1,45 @@
-import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Rectangle;
+import java.awt.image.BufferedImage;
 
 public class Bullet {
-    private int x, y; // 총알 위치
-    private int speed; // 총알 이동 속도
-    private int damage; // 총알 데미지
+    private int x, y;
+    private int speed;
+    private int damage;
+    private BufferedImage[] frames;
+    private int currentFrame = 0;
+    private int frameCount = 0;
+    private int animationSpeed = 4; // 애니메이션 속도 조정
 
-    // 생성자
-    public Bullet(int x, int y, int speed, int damage) {
+    public Bullet(int x, int y, int speed, int damage, BufferedImage[] frames) {
         this.x = x;
         this.y = y;
         this.speed = speed;
         this.damage = damage;
+        this.frames = frames;
     }
 
-    // 총알 이동
     public void move() {
         y -= speed; // 위쪽으로 이동
     }
 
-    // 총알 렌더링
     public void render(Graphics g) {
-        g.setColor(Color.RED);
-        g.fillRect(x, y, 5, 10); // 총알을 (x, y)에 그리기
+        currentFrame = (frameCount / animationSpeed) % frames.length;
+        g.drawImage(frames[currentFrame], x, y, null);
+        frameCount++;
     }
 
-    // 총알의 충돌 영역 반환
-    public Rectangle getBounds() {
-        return new Rectangle(x, y, 5, 10);
-    }
-
-    // 총알의 데미지 반환
     public int getDamage() {
         return damage;
     }
 
-    // x 좌표 반환
-    public int getX() {
-        return x;
-    }
+	public int getY() {
+		// TODO Auto-generated method stub
+		return 0;
+	}
 
-    // y 좌표 반환
-    public int getY() {
-        return y;
-    }
+	public Rectangle getBounds() { 
+	    // 적의 영역을 40x40으로 설정
+	    return new Rectangle(x, y, 6, 4);
+	}
 }

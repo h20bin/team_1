@@ -1,11 +1,5 @@
-import java.awt.Color;
-import java.awt.Font;
-import java.awt.Graphics;
-
-import javax.swing.JButton;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.SwingConstants;
+import javax.swing.*;
+import java.awt.*;
 
 public class StagePanel extends JPanel {
     private GameManager manager;
@@ -21,20 +15,19 @@ public class StagePanel extends JPanel {
 
         int yPosition = 100;
 
-        // Stage Buttons
+        // 스테이지 버튼 생성
         for (int i = 1; i <= 4; i++) {
             int stageNum = i;
             JButton stageButton = new JButton("Stage " + stageNum);
             stageButton.setBounds(50, yPosition, 300, 50);
             stageButton.addActionListener(e -> {
-                System.out.println("Stage " + stageNum + " selected!");
                 manager.switchPanel(new StageGamePanel(manager, stageNum));
             });
             add(stageButton);
             yPosition += 60;
         }
 
-        // Go back to lobby
+        // 로비로 돌아가기 버튼
         JButton lobbyButton = new JButton("Go to Lobby");
         lobbyButton.setBounds(150, 400, 100, 50);
         lobbyButton.addActionListener(e -> manager.switchPanel(new LobbyPanel(manager)));

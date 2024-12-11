@@ -1,12 +1,5 @@
-import java.awt.Color;
-import java.awt.Font;
-import java.awt.Graphics;
-
-import javax.swing.JButton;
-import javax.swing.JLabel;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import javax.swing.SwingConstants;
+import javax.swing.*;
+import java.awt.*;
 
 public class ForgePanel extends JPanel {
     private GameManager manager;
@@ -27,7 +20,7 @@ public class ForgePanel extends JPanel {
         hpButton.setBounds(50, yPosition, 300, 50);
         hpButton.addActionListener(e -> attemptUpgrade("MaxHP", 100, () -> {
             Player player = manager.getPlayer();
-            player.maxHP += 10;
+            player.increaseMaxHP(10);
             JOptionPane.showMessageDialog(this, "MaxHP upgraded!");
         }));
         add(hpButton);
@@ -38,7 +31,7 @@ public class ForgePanel extends JPanel {
         speedButton.setBounds(50, yPosition, 300, 50);
         speedButton.addActionListener(e -> attemptUpgrade("MaxSpeed", 150, () -> {
             Player player = manager.getPlayer();
-            player.maxSpeed += 0.1;
+            player.increaseMaxHP(0.1);
             JOptionPane.showMessageDialog(this, "MaxSpeed upgraded!");
         }));
         add(speedButton);
@@ -49,7 +42,7 @@ public class ForgePanel extends JPanel {
         attackCycleButton.setBounds(50, yPosition, 300, 50);
         attackCycleButton.addActionListener(e -> attemptUpgrade("Attack Cycle", 200, () -> {
             Player player = manager.getPlayer();
-            player.attackCycle -= 0.1;
+            player.reduceAttackCycle(0.1);
             JOptionPane.showMessageDialog(this, "Attack Cycle upgraded!");
         }));
         add(attackCycleButton);

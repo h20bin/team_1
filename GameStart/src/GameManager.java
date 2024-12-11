@@ -1,5 +1,4 @@
 import javax.swing.*;
-import java.awt.*;
 
 public class GameManager {
     private JFrame frame;
@@ -7,13 +6,17 @@ public class GameManager {
     private Player player;
 
     public GameManager() {
-        player = Player.getInstance(); // Singleton Player
+        // 싱글톤 Player 인스턴스 가져오기
+        player = Player.getInstance();
+
+        // 초기 상태 설정
+        player.reset();
+
         frame = new JFrame("Shooting Game");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setSize(512, 768);
         frame.setResizable(false);
 
-        // Load the title panel initially
         switchPanel(new TitlePanel(this));
         frame.setVisible(true);
     }

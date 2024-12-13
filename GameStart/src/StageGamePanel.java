@@ -21,6 +21,7 @@ public class StageGamePanel extends JPanel implements ActionListener, KeyListene
     private Rectangle goal; // 스테이지 클리어 목표
     private BufferedImage background; // 배경 이미지
     private Clip shootSound; // 총 소리 클립
+    private Clip backgroundMusic; // 배경 음악 클립
 
     public StageGamePanel(GameManager manager, int stageNum) {
         this.manager = manager;
@@ -29,6 +30,7 @@ public class StageGamePanel extends JPanel implements ActionListener, KeyListene
 
         initializeStage(stageNum);
         loadShootSound(); // 총 소리 로드
+        loadBackgroundMusic(); // 배경 음악 로드
 
         // 게임 루프 시작
         timer = new Timer(16, this);
@@ -86,6 +88,18 @@ public class StageGamePanel extends JPanel implements ActionListener, KeyListene
         }
     }
 
+    private void loadBackgroundMusic() {
+        try {
+            File musicFile = new File("GameStart/src/backgroundmusic.wav"); // 배경 음악 파일 경로
+            AudioInputStream audioStream = AudioSystem.getAudioInputStream(musicFile);
+            backgroundMusic = AudioSystem.getClip();
+            backgroundMusic.open(audioStream);
+            backgroundMusic.loop(Clip.LOOP_CONTINUOUSLY); // 음악 무한 반복
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
     private void playShootSound() {
         if (shootSound != null) {
             shootSound.setFramePosition(0); // 소리가 끝나면 처음으로 돌아가게 설정
@@ -119,13 +133,28 @@ public class StageGamePanel extends JPanel implements ActionListener, KeyListene
     }
 
     private void drawBackground(Graphics g) {
-        // 배경 이미지 그리기
-        g.drawImage(background, 0, backgroundY, getWidth(), getHeight(), this);
+        // 화면 크기 가져오기
+        int panelWidth = getWidth();
+        int panelHeight = getHeight();
 
-        // 배경 스크롤링
-        backgroundY += 1;
-        if (backgroundY > getHeight()) {
-            backgroundY = 0;
+        // 배경 이미지의 실제 크기
+        int bgWidth = background.getWidth();
+        int bgHeight = background.getHeight();
+
+        // 배경 이미지를 화면 크기에 맞게 그리기
+        g.drawImage(background, 0, backgroundY, panelWidth, panelHeight, this);
+
+        // 두 번째 배경 그리기 (스크롤되는 배경 처리)
+        if (backgroundY > 0) {
+            g.drawImage(background, 0, backgroundY - bgHeight, panelWidth, panelHeight, this);
+        } else {
+            g.drawImage(background, 0, backgroundY + bgHeight, panelWidth, panelHeight, this);
+        }
+
+        // 배경 스크롤링 처리
+        backgroundY += 1; // 배경이 위로 스크롤
+        if (backgroundY >= bgHeight) {
+            backgroundY = 0; // 배경이 끝나면 0으로 리셋
         }
     }
 

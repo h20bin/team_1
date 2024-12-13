@@ -10,7 +10,8 @@ public class Player extends Character {
     private int currentHP;
     private int gold;
 
-    private Player() {
+
+    Player() {
         super(0, 0, null, null); // 기본값 설정
 
         try {
@@ -66,9 +67,35 @@ public class Player extends Character {
 
     @Override
     public void move(int dx, int dy) {
+        // 플레이어 이미지의 너비와 높이를 sprite에서 가져옴
+        int playerWidth = sprite.getWidth();
+        int playerHeight = sprite.getHeight();
+
+        // 이동 후 새로운 x, y 계산
         x += dx;
         y += dy;
+
+        // 화면 왼쪽 경계를 벗어나지 않도록 제한
+        if (x < 0) {
+            x = 0;
+        }
+
+        // 화면 오른쪽 경계를 벗어나지 않도록 제한
+        if (x + playerWidth > 500) {  
+            x = 500 - playerWidth;
+        }
+
+        // 화면 위쪽 경계를 벗어나지 않도록 제한
+        if (y < 0) {
+            y = 0;
+        }
+
+        // 화면 아래쪽 경계를 벗어나지 않도록 제한
+        if (y + playerHeight > 750) {  
+            y = 750 - playerHeight;
+        }
     }
+
 
     @Override
     public void render(Graphics g) {
@@ -124,8 +151,12 @@ public class Player extends Character {
     private BufferedImage[] loadSpriteSheet(String resourcePath, int frameWidth, int frameHeight) throws IOException {
         return new SpriteSheet(resourcePath, frameWidth, frameHeight).getAllFrames();
     }
-
-	public void increaseMaxHP(double d) {
+    public void increaseMaxHP(double d) {
 		this.maxHP += d;
+	}
+
+	public void play() {
+		// TODO Auto-generated method stub
+		
 	}
 }

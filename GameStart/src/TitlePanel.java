@@ -74,13 +74,13 @@ public class TitlePanel extends JPanel {
     
     private void startBackgroundMusic() {
         musicThread = new Thread(() -> {
-            try {
-                String musicFilePath = "GameStart/src/backgroundmusic.mp3"; // 경로 설정
-                FileInputStream fileInputStream = new FileInputStream(musicFilePath);
-                Player player = new Player(fileInputStream);
-                player.play(); // 음악 재생
-            } catch (Exception e) {
-                e.printStackTrace();
+        	   try {
+                   String musicFilePath = "GameStart/src/backgroundmusic.mp3"; // 경로 설정
+                   FileInputStream fileInputStream = new FileInputStream(musicFilePath);
+                   Player player = new Player();
+                   player.play(); // 음악 재생
+               } catch (Exception e) {
+                   e.printStackTrace();
             }
         });
         musicThread.start();

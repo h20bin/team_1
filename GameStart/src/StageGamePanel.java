@@ -5,6 +5,8 @@ import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.nio.file.Paths;
 import javax.imageio.ImageIO;
+import javax.sound.sampled.*;
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -18,6 +20,7 @@ public class StageGamePanel extends JPanel implements ActionListener, KeyListene
     private boolean[] keys = new boolean[256]; // 키 입력 상태 저장
     private Rectangle goal; // 스테이지 클리어 목표
     private BufferedImage background; // 배경 이미지
+    private Clip shootSound; // 총 소리 클립
 
     public StageGamePanel(GameManager manager, int stageNum) {
         this.manager = manager;
@@ -25,6 +28,7 @@ public class StageGamePanel extends JPanel implements ActionListener, KeyListene
         this.enemies = new ArrayList<>();
 
         initializeStage(stageNum);
+        loadShootSound(); // 총 소리 로드
 
         // 게임 루프 시작
         timer = new Timer(16, this);
@@ -68,6 +72,24 @@ public class StageGamePanel extends JPanel implements ActionListener, KeyListene
         } catch (IOException e) {
             e.printStackTrace();
             background = new BufferedImage(1, 1, BufferedImage.TYPE_INT_ARGB); // 실패 시 1x1 빈 이미지
+        }
+    }
+
+    private void loadShootSound() {
+        try {
+            File soundFile = new File("GameStart/src/gunsound.wav"); // 총 소리 파일 경로
+            AudioInputStream audioStream = AudioSystem.getAudioInputStream(soundFile);
+            shootSound = AudioSystem.getClip();
+            shootSound.open(audioStream);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void playShootSound() {
+        if (shootSound != null) {
+            shootSound.setFramePosition(0); // 소리가 끝나면 처음으로 돌아가게 설정
+            shootSound.start(); // 소리 재생
         }
     }
 
@@ -184,6 +206,7 @@ public class StageGamePanel extends JPanel implements ActionListener, KeyListene
         keys[e.getKeyCode()] = true;
         if (e.getKeyCode() == KeyEvent.VK_M) {
             player.getWeapon().shoot(player.getX(), player.getY());
+            playShootSound(); // 총 쏠 때 소리 재생
         }
     }
 

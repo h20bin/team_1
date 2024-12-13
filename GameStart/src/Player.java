@@ -10,6 +10,9 @@ public class Player extends Character {
     private int currentHP;
     private int gold;
 
+    private boolean invincible;  // 무적 상태
+    private long invincibleStartTime;  // 무적 시작 시간
+    private static final long INVINCIBLE_TIME = 2000;  // 무적 시간 (2초)
 
     Player() {
         super(0, 0, null, null); // 기본값 설정
@@ -49,16 +52,72 @@ public class Player extends Character {
         this.maxHP = 100;
         this.currentHP = maxHP;
         this.gold = 0;
+        this.invincible = false;  // 초기에는 무적 상태 아님
+        this.invincibleStartTime = 0;
+
         if (weapon != null) {
             weapon.reset(); // 무기 초기화
         }
     }
 
-    public void takeDamage(int damage) {
+    public void takeDamage(int damage, int knockbackDirection) {
+        // 무적 상태 체크
+        if (isInvincible()) {
+            System.out.println("Player is invincible, no damage taken!");
+            return;  // 무적 상태면 피해를 받지 않음
+        }
+
+        // 피해 처리
         currentHP = Math.max(0, currentHP - damage);
         if (currentHP == 0) {
             System.out.println("Player is dead!");
+            gameOver();
         }
+
+        // 넉백 효과 적용 (더 강한 넉백)
+        applyKnockback(knockbackDirection);
+
+        // 플레이어가 지면에 떨어졌는지 확인
+        if (y > 600) { // 예시로 y > 600이면 게임 종료
+            System.out.println("Player has fallen off the ground! Game Over!");
+            gameOver();
+        }
+
+        // 무적 시간 시작
+        invincible = true;
+        invincibleStartTime = System.currentTimeMillis();
+    }
+
+    private void gameOver() {
+        // 게임 오버 처리 로직 (예: 게임 종료)
+        System.exit(0);  // 예시로 게임 종료
+    }
+
+    private void applyKnockback(int knockbackDirection) {
+        int knockbackDistance = 100; // 넉백 거리 강하게 설정
+
+        // 넉백 방향에 따라 x, y 위치 변경
+        if (knockbackDirection == -1) {
+            x -= knockbackDistance; // 왼쪽으로 넉백
+        } else if (knockbackDirection == 1) {
+            x += knockbackDistance; // 오른쪽으로 넉백
+        } else if (knockbackDirection == -2) {
+            y -= knockbackDistance; // 위로 넉백
+        } else if (knockbackDirection == 2) {
+            y += knockbackDistance; // 아래로 넉백
+        }
+
+        // 화면 경계를 벗어나지 않도록 제한
+        x = Math.max(0, Math.min(x, 500));  // x 좌표 경계
+        y = Math.max(0, Math.min(y, 750));  // y 좌표 경계
+    }
+
+    private boolean isInvincible() {
+        // 무적 시간이 경과했는지 체크
+        if (invincible && System.currentTimeMillis() - invincibleStartTime >= INVINCIBLE_TIME) {
+            invincible = false;  // 무적 상태 해제
+        }
+        return invincible;
     }
 
     public void addGold(int amount) {
@@ -95,7 +154,6 @@ public class Player extends Character {
             y = 750 - playerHeight;
         }
     }
-
 
     @Override
     public void render(Graphics g) {
@@ -151,12 +209,12 @@ public class Player extends Character {
     private BufferedImage[] loadSpriteSheet(String resourcePath, int frameWidth, int frameHeight) throws IOException {
         return new SpriteSheet(resourcePath, frameWidth, frameHeight).getAllFrames();
     }
-    public void increaseMaxHP(double d) {
-		this.maxHP += d;
-	}
 
-	public void play() {
-		// TODO Auto-generated method stub
-		
-	}
+    public void increaseMaxHP(double d) {
+        this.maxHP += d;
+    }
+
+    public void play() {
+        // 플레이어가 진행할 다른 기능들을 여기에 구현
+    }
 }

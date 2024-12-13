@@ -125,22 +125,53 @@ public class StageGamePanel extends JPanel implements ActionListener, KeyListene
     }
 
     private void checkCollisions() {
-        // 적과 총알 충돌
         Iterator<Enemy> enemyIterator = enemies.iterator();
         while (enemyIterator.hasNext()) {
             Enemy enemy = enemyIterator.next();
             Rectangle enemyBounds = enemy.getBounds();
+
+            // 플레이어와 적 충돌 확인
+            if (player.getBounds().intersects(enemyBounds)) {
+                // 충돌 시 넉백 방향 계산
+                int knockbackDirection = 0;
+
+                // 플레이어와 적의 상대적인 위치를 확인하여 넉백 방향 결정
+                if (player.getX() < enemy.getX()) {
+                    knockbackDirection = 1;  // 오른쪽으로 넉백
+                } else if (player.getX() > enemy.getX()) {
+                    knockbackDirection = -1; // 왼쪽으로 넉백
+                } else if (player.getY() < enemy.getY()) {
+                    knockbackDirection = 2;  // 아래로 넉백
+                } else if (player.getY() > enemy.getY()) {
+                    knockbackDirection = -2; // 위로 넉백
+                }
+
+                // 플레이어에게 피해 주고 넉백 적용
+                player.takeDamage(10, knockbackDirection);  // 10의 피해를 주고 넉백 방향 전달
+                System.out.println("Player collided with enemy! Player HP: " + player.getCurrentHP());
+            }
+
+            // 총알과 적의 충돌 확인
             for (Bullet bullet : player.getWeapon().getBullets()) {
                 if (enemyBounds.intersects(bullet.getBounds())) {
                     enemy.takeDamage(bullet.getDamage());
                     if (enemy.getHealth() <= 0) {
-                        enemyIterator.remove();  // 안전하게 적 삭제
+                        enemyIterator.remove();  // 적 제거
                         player.addGold(10);
                         break;
                     }
                 }
             }
         }
+
+        // 목표 지점 도달
+        if (player.getBounds().intersects(new Rectangle(goal.x, goal.y + backgroundY, goal.width, goal.height))) {
+            JOptionPane.showMessageDialog(this, "Stage Cleared!");
+            player.addGold(100);
+            manager.switchPanel(new LobbyPanel(manager));
+            timer.stop();
+        }
+    
 
         // 목표 지점 도달
         if (player.getBounds().intersects(new Rectangle(goal.x, goal.y + backgroundY, goal.width, goal.height))) {

@@ -3,6 +3,8 @@ import java.awt.*;
 import java.awt.event.*;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
+import java.nio.file.Paths;
+import javax.imageio.ImageIO;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -15,6 +17,7 @@ public class StageGamePanel extends JPanel implements ActionListener, KeyListene
     private int backgroundY = 0; // 배경 스크롤 위치
     private boolean[] keys = new boolean[256]; // 키 입력 상태 저장
     private Rectangle goal; // 스테이지 클리어 목표
+    private BufferedImage background; // 배경 이미지
 
     public StageGamePanel(GameManager manager, int stageNum) {
         this.manager = manager;
@@ -58,6 +61,14 @@ public class StageGamePanel extends JPanel implements ActionListener, KeyListene
 
         // 목표 지점 (클리어 목표인 별의 좌표)
         goal = new Rectangle(160, -2560 + 100, 40, 40);
+
+        // 배경 이미지 로드 (GameStart/src 폴더 경로 사용)
+        try {
+            background = ImageIO.read(Paths.get("GameStart/src/background.jpg").toFile());
+        } catch (IOException e) {
+            e.printStackTrace();
+            background = new BufferedImage(1, 1, BufferedImage.TYPE_INT_ARGB); // 실패 시 1x1 빈 이미지
+        }
     }
 
     @Override
@@ -86,15 +97,10 @@ public class StageGamePanel extends JPanel implements ActionListener, KeyListene
     }
 
     private void drawBackground(Graphics g) {
-        g.setColor(Color.BLACK);
-        g.fillRect(0, 0, getWidth(), getHeight());
+        // 배경 이미지 그리기
+        g.drawImage(background, 0, backgroundY, getWidth(), getHeight(), this);
 
         // 배경 스크롤링
-        g.setColor(Color.GRAY);
-        for (int i = -2500 + backgroundY; i <= backgroundY; i += 100) {
-            g.fillRect(0, i, getWidth(), 100); // 임시 배경 타일
-        }
-
         backgroundY += 1;
         if (backgroundY > getHeight()) {
             backgroundY = 0;
@@ -163,15 +169,6 @@ public class StageGamePanel extends JPanel implements ActionListener, KeyListene
                 }
             }
         }
-
-        // 목표 지점 도달
-        if (player.getBounds().intersects(new Rectangle(goal.x, goal.y + backgroundY, goal.width, goal.height))) {
-            JOptionPane.showMessageDialog(this, "Stage Cleared!");
-            player.addGold(100);
-            manager.switchPanel(new LobbyPanel(manager));
-            timer.stop();
-        }
-    
 
         // 목표 지점 도달
         if (player.getBounds().intersects(new Rectangle(goal.x, goal.y + backgroundY, goal.width, goal.height))) {

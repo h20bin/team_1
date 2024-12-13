@@ -11,21 +11,21 @@ public class LobbyPanel extends JPanel {
         JLabel playerLabel = new JLabel("Player");
         playerLabel.setHorizontalAlignment(SwingConstants.CENTER);
         playerLabel.setFont(new Font("Arial", Font.BOLD, 24));
-        playerLabel.setBounds(100, 50, 200, 30);
+        playerLabel.setBounds(180, 50, 200, 30);
         add(playerLabel);
 
         JButton shopButton = new JButton("Shop");
-        shopButton.setBounds(50, 250, 100, 50);
+        shopButton.setBounds(80, 250, 100, 50);
         shopButton.addActionListener(e -> manager.switchPanel(new ShopPanel(manager)));
         add(shopButton);
 
         JButton stageButton = new JButton("Stage");
-        stageButton.setBounds(150, 250, 100, 50);
+        stageButton.setBounds(180, 250, 100, 50);
         stageButton.addActionListener(e -> manager.switchPanel(new StagePanel(manager)));
         add(stageButton);
 
         JButton forgeButton = new JButton("Forge");
-        forgeButton.setBounds(250, 250, 100, 50);
+        forgeButton.setBounds(280, 250, 100, 50);
         forgeButton.addActionListener(e -> manager.switchPanel(new ForgePanel(manager)));
         add(forgeButton);
     }

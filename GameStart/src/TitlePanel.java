@@ -1,19 +1,25 @@
+import javax.sound.sampled.AudioInputStream;
+import javax.sound.sampled.AudioSystem;
+import javax.sound.sampled.Clip;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
 
 public class TitlePanel extends JPanel {
     private GameManager manager;
-    private ImageIcon backgroundImageIcon;
+    private ImageIcon mainbackgroundImageIcon;
     private Thread musicThread; // 배경 음악을 재생할 스레드
+	private Clip musicClip;
 
     public TitlePanel(GameManager manager) {
         this.manager = manager;
         setLayout(null);
 
-        backgroundImageIcon = new ImageIcon("Resource/hehe.jpg");
+        mainbackgroundImageIcon = new ImageIcon(getClass().getResource("/background/mainback.jpg"));
         
         JButton startButton = new JButton("Start");
         startButton.setBounds(180, 150, 100, 50);
@@ -47,8 +53,8 @@ public class TitlePanel extends JPanel {
     @Override
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
-        if (backgroundImageIcon != null) {
-            Image backgroundImage = backgroundImageIcon.getImage(); // ImageIcon에서 Image 객체 추출
+        if (mainbackgroundImageIcon != null) {
+            Image backgroundImage = mainbackgroundImageIcon.getImage(); // ImageIcon에서 Image 객체 추출
             g.drawImage(backgroundImage, 0, 0, getWidth(), getHeight(), this); // 배경 이미지를 패널 크기에 맞게 그리기
         } else {
             // 이미지가 로드되지 않았을 경우 검정색 배경
@@ -73,24 +79,29 @@ public class TitlePanel extends JPanel {
     }
     
     private void startBackgroundMusic() {
-        musicThread = new Thread(() -> {
-        	   try {
-                   String musicFilePath = "GameStart/src/backgroundmusic.mp3"; // 경로 설정
-                   FileInputStream fileInputStream = new FileInputStream(musicFilePath);
-                   Player player = new Player();
-                   player.play(); // 음악 재생
-               } catch (Exception e) {
-                   e.printStackTrace();
-            }
-        });
-        musicThread.start();
-    }
+    	try {
+             // 클래스패스에서 WAV 파일을 로드
+             InputStream musicStream = getClass().getResourceAsStream("/background/mainbackgroundmusic.wav");
+             if (musicStream == null) {
+                 throw new IOException("Music file not found");
+             }
 
-    // 배경 음악을 중지하는 메서드
-    private void stopBackgroundMusic() {
-        if (musicThread != null && musicThread.isAlive()) {
-            musicThread.interrupt();
-        }
-    }
+             // AudioInputStream을 사용하여 오디오 데이터를 읽어 Clip 객체에 로드
+             AudioInputStream audioStream = AudioSystem.getAudioInputStream(musicStream);
+             musicClip = AudioSystem.getClip();
+             musicClip.open(audioStream);
+             musicClip.loop(Clip.LOOP_CONTINUOUSLY); // 반복 재생
+
+         } catch (Exception e) {
+             e.printStackTrace();
+         }
+     }
+
+     // 배경 음악을 중지하는 메서드
+     private void stopBackgroundMusic() {
+         if (musicClip != null && musicClip.isRunning()) {
+             musicClip.stop();
+         }
+     }
 
 }

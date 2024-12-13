@@ -51,14 +51,16 @@ public class Player extends Character {
         this.y = 100;
         this.maxHP = 100;
         this.currentHP = maxHP;
-        this.gold = 0;
         this.invincible = false;  // 초기에는 무적 상태 아님
         this.invincibleStartTime = 0;
 
         if (weapon != null) {
             weapon.reset(); // 무기 초기화
         }
+
+        // 골드는 초기화하지 않음
     }
+
 
     public void takeDamage(int damage, int knockbackDirection) {
         // 무적 상태 체크

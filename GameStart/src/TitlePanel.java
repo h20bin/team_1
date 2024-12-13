@@ -77,7 +77,7 @@ public class TitlePanel extends JPanel {
             try {
                 String musicFilePath = "GameStart/src/backgroundmusic.mp3"; // 경로 설정
                 FileInputStream fileInputStream = new FileInputStream(musicFilePath);
-                Player player = new Player(fileInputStream);
+                Player player = new Player();
                 player.play(); // 음악 재생
             } catch (Exception e) {
                 e.printStackTrace();

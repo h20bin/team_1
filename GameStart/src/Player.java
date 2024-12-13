@@ -10,7 +10,7 @@ public class Player extends Character {
     private int currentHP;
     private int gold;
 
-    private Player() {
+    Player() {
         super(0, 0, null, null); // 기본값 설정
 
         try {
@@ -127,5 +127,10 @@ public class Player extends Character {
 
 	public void increaseMaxHP(double d) {
 		this.maxHP += d;
+	}
+
+	public void play() {
+		// TODO Auto-generated method stub
+		
 	}
 }

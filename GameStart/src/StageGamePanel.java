@@ -4,6 +4,7 @@ import java.awt.event.*;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 public class StageGamePanel extends JPanel implements ActionListener, KeyListener {
@@ -125,13 +126,15 @@ public class StageGamePanel extends JPanel implements ActionListener, KeyListene
 
     private void checkCollisions() {
         // 적과 총알 충돌
-        for (Enemy enemy : enemies) {
+        Iterator<Enemy> enemyIterator = enemies.iterator();
+        while (enemyIterator.hasNext()) {
+            Enemy enemy = enemyIterator.next();
             Rectangle enemyBounds = enemy.getBounds();
             for (Bullet bullet : player.getWeapon().getBullets()) {
                 if (enemyBounds.intersects(bullet.getBounds())) {
                     enemy.takeDamage(bullet.getDamage());
                     if (enemy.getHealth() <= 0) {
-                        enemies.remove(enemy);
+                        enemyIterator.remove();  // 안전하게 적 삭제
                         player.addGold(10);
                         break;
                     }

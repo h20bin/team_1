@@ -3,6 +3,9 @@ import java.awt.*;
 
 public class ForgePanel extends JPanel {
     private GameManager manager;
+    private int hpUpgradeCost = 100;
+    private int speedUpgradeCost = 150;
+    private int attackCycleUpgradeCost = 200;
 
     public ForgePanel(GameManager manager) {
         this.manager = manager;
@@ -16,34 +19,43 @@ public class ForgePanel extends JPanel {
         int yPosition = 100;
 
         // Upgrade MaxHP
-        JButton hpButton = new JButton("Upgrade MaxHP - 100 Gold");
+        JButton hpButton = new JButton("Upgrade MaxHP - " + hpUpgradeCost + " Gold");
         hpButton.setBounds(50, yPosition, 300, 50);
-        hpButton.addActionListener(e -> attemptUpgrade("MaxHP", 100, () -> {
+        hpButton.addActionListener(e -> attemptUpgrade("MaxHP", hpUpgradeCost, () -> {
             Player player = manager.getPlayer();
             player.increaseMaxHP(10);
             JOptionPane.showMessageDialog(this, "MaxHP upgraded!");
+            // 50골드씩 증가
+            hpUpgradeCost += 50;
+            hpButton.setText("Upgrade MaxHP - " + hpUpgradeCost + " Gold");
         }));
         add(hpButton);
         yPosition += 60;
 
         // Upgrade MaxSpeed
-        JButton speedButton = new JButton("Upgrade MaxSpeed - 150 Gold");
+        JButton speedButton = new JButton("Upgrade MaxSpeed - " + speedUpgradeCost + " Gold");
         speedButton.setBounds(50, yPosition, 300, 50);
-        speedButton.addActionListener(e -> attemptUpgrade("MaxSpeed", 150, () -> {
+        speedButton.addActionListener(e -> attemptUpgrade("MaxSpeed", speedUpgradeCost, () -> {
             Player player = manager.getPlayer();
-            player.increaseMaxHP(0.1);
+            player.increaseMaxSpeed(0.1);
             JOptionPane.showMessageDialog(this, "MaxSpeed upgraded!");
+            // 50골드씩 증가
+            speedUpgradeCost += 50;
+            speedButton.setText("Upgrade MaxSpeed - " + speedUpgradeCost + " Gold");
         }));
         add(speedButton);
         yPosition += 60;
 
         // Upgrade Attack Cycle
-        JButton attackCycleButton = new JButton("Upgrade Attack Cycle - 200 Gold");
+        JButton attackCycleButton = new JButton("Upgrade Attack Cycle - " + attackCycleUpgradeCost + " Gold");
         attackCycleButton.setBounds(50, yPosition, 300, 50);
-        attackCycleButton.addActionListener(e -> attemptUpgrade("Attack Cycle", 200, () -> {
+        attackCycleButton.addActionListener(e -> attemptUpgrade("Attack Cycle", attackCycleUpgradeCost, () -> {
             Player player = manager.getPlayer();
             player.reduceAttackCycle(0.1);
             JOptionPane.showMessageDialog(this, "Attack Cycle upgraded!");
+            // 50골드씩 증가
+            attackCycleUpgradeCost += 50;
+            attackCycleButton.setText("Upgrade Attack Cycle - " + attackCycleUpgradeCost + " Gold");
         }));
         add(attackCycleButton);
 

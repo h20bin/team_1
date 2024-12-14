@@ -12,6 +12,20 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Random;
 
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.*;
+import java.awt.image.BufferedImage;
+import java.io.IOException;
+import java.nio.file.Paths;
+import javax.imageio.ImageIO;
+import javax.sound.sampled.*;
+import java.io.File;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Random;
+
 public class StageGamePanel extends JPanel implements ActionListener, KeyListener {
     private GameManager manager;
     private Timer timer;
@@ -48,7 +62,13 @@ public class StageGamePanel extends JPanel implements ActionListener, KeyListene
         addKeyListener(this);
     }
 
-    private void initializeStage(int stageNum) {
+    public void initializeStage(int stageNum) {
+        // 스테이지가 시작될 때마다 플레이어의 HP를 업그레이드된 상태로 유지
+        // 예: 스테이지마다 HP를 10씩 업그레이드 (이 부분은 원하는 대로 수정)
+        if (stageNum > 1) {
+            player.increaseMaxHP(10); // 예시로 스테이지마다 10만큼 HP를 증가
+        }
+
         // 적 생성
         for (int i = 0; i < stageNum * 5; i++) {
             BufferedImage enemySprite = null;
@@ -66,8 +86,6 @@ public class StageGamePanel extends JPanel implements ActionListener, KeyListene
             Weapon enemyWeapon = new Weapon(enemySprite, 3 + stageNum, 5, 2, new BufferedImage[0]); // 난이도 증가
             enemies.add(new Enemy(50 + (i * 40) % 300, -100 - (i * 80), 50 + stageNum * 10, enemySprite, enemyWeapon));
         }
-
-        player.reset();
 
         // 목표 지점 초기화
         goal = new Rectangle(0, 0, 40, 40); // 초기에는 화면 밖에 설정

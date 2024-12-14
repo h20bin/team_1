@@ -30,6 +30,7 @@ public class StageGamePanel extends JPanel implements ActionListener, KeyListene
     private BufferedImage starImage;
 
     private JButton pauseButton; // 일시정지 버튼
+    private JButton mainMenuButton; // 메인 메뉴로 돌아가는 버튼
 
     public StageGamePanel(GameManager manager, int stageNum) {
         this.manager = manager;
@@ -75,7 +76,14 @@ public class StageGamePanel extends JPanel implements ActionListener, KeyListene
         pauseButton.setBounds(10, 10, 100, 30);
         pauseButton.addActionListener(e -> togglePause());
         this.add(pauseButton);
+        
+     // 메인 메뉴 버튼 추가
+        mainMenuButton = new JButton("Main Menu");
+        mainMenuButton.setBounds(120, 10, 120, 30);
+        mainMenuButton.addActionListener(e -> goToMainMenu());
+        this.add(mainMenuButton);
     }
+
 
     private void togglePause() {
         if (timer.isRunning()) {
@@ -95,6 +103,15 @@ public class StageGamePanel extends JPanel implements ActionListener, KeyListene
             setFocusable(true);
             requestFocusInWindow();  // 포커스를 다시 설정하여 키 입력을 받을 수 있게 함
         }
+    }
+    
+    private void goToMainMenu() {
+        // 게임 중지
+        timer.stop();
+        backgroundMusic.stop(); // 배경 음악 멈추기
+        
+        // 메인 메뉴로 돌아가기
+        manager.switchPanel(new TitlePanel(manager)); // 메인 메뉴로 이동
     }
 
     private void initializeStage(int stageNum) {
@@ -290,6 +307,9 @@ public class StageGamePanel extends JPanel implements ActionListener, KeyListene
         // 발사 키 처리
         if (e.getKeyCode() == KeyEvent.VK_M) {
             isShooting = true;
+        }    
+        if (e.getKeyCode() == KeyEvent.VK_SPACE) {
+                togglePause(); // 일시정지/재개 토글
         }
     }
 

@@ -1,5 +1,6 @@
 import javax.swing.*;
 import java.awt.*;
+import java.io.IOException;
 
 public class LobbyPanel extends JPanel {
     private GameManager manager;
@@ -16,7 +17,14 @@ public class LobbyPanel extends JPanel {
 
         JButton shopButton = new JButton("Shop");
         shopButton.setBounds(80, 250, 100, 50);
-        shopButton.addActionListener(e -> manager.switchPanel(new ShopPanel(manager)));
+        shopButton.addActionListener(e -> {
+			try {
+				manager.switchPanel(new ShopPanel(manager));
+			} catch (IOException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
+		});
         add(shopButton);
 
         JButton stageButton = new JButton("Stage");

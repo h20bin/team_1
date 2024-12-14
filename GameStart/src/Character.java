@@ -5,7 +5,12 @@ import java.awt.image.BufferedImage;
 public abstract class Character {
     protected int x, y;
     protected BufferedImage sprite;
+    protected BufferedImage[] wing;
     protected Weapon weapon;
+    
+    private int currentWingFrame = 0; // 현재 Wing 프레임 인덱스
+    private int frameCount = 0; // 애니메이션 프레임 카운트
+    private int animationSpeed = 1; // 애니메이션 속도 (프레임 간격)
 
     public Character(int x, int y, BufferedImage sprite, Weapon weapon) {
         this.x = x;
@@ -22,6 +27,18 @@ public abstract class Character {
 
         // Body 그리기
         g.drawImage(sprite, x, y, null);
+        
+        // Wing 애니메이션 그리기
+        if (wing != null && wing.length > 0) {
+            g.drawImage(wing[currentWingFrame], x, y, null);
+
+            // 애니메이션 프레임 업데이트
+            frameCount++;
+            if (frameCount >= animationSpeed) {
+                currentWingFrame = (currentWingFrame + 1) % wing.length; // 프레임 순환
+                frameCount = 0;
+            }
+        }
     }
 
     public abstract void move(int dx, int dy);

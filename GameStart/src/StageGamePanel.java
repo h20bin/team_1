@@ -26,11 +26,13 @@ public class StageGamePanel extends JPanel implements ActionListener, KeyListene
     private Clip backgroundMusic; // 배경 음악 클립
     private Random random = new Random(); // 랜덤 위치 생성을 위한 Random 객체
     private boolean isShooting;
+    private int stageNum;
 
     public StageGamePanel(GameManager manager, int stageNum) {
         this.manager = manager;
         this.player = manager.getPlayer();
         this.enemies = new ArrayList<>();
+        this.stageNum = stageNum;
 
         initializeStage(stageNum);
         loadShootSound(); // 총 소리 로드
@@ -61,8 +63,8 @@ public class StageGamePanel extends JPanel implements ActionListener, KeyListene
                 g.dispose();
             }
 
-            Weapon enemyWeapon = new Weapon(enemySprite, 3, 5, 2, new BufferedImage[0]);
-            enemies.add(new Enemy(50 + (i * 40) % 300, -100 - (i * 80), 50, enemySprite, enemyWeapon));
+            Weapon enemyWeapon = new Weapon(enemySprite, 3 + stageNum, 5, 2, new BufferedImage[0]); // 난이도 증가
+            enemies.add(new Enemy(50 + (i * 40) % 300, -100 - (i * 80), 50 + stageNum * 10, enemySprite, enemyWeapon));
         }
 
         player.reset();
@@ -142,6 +144,7 @@ public class StageGamePanel extends JPanel implements ActionListener, KeyListene
         g.setColor(Color.WHITE);
         g.drawString("HP: " + player.getCurrentHP() + "/" + player.getMaxHP(), 10, 20);
         g.drawString("Gold: " + player.getGold(), 10, 40);
+        g.drawString("Stage: " + stageNum, 10, 60);
     }
 
     private void drawBackground(Graphics g) {
@@ -154,7 +157,7 @@ public class StageGamePanel extends JPanel implements ActionListener, KeyListene
         g.drawImage(background, 0, backgroundY - bgHeight, panelWidth, panelHeight, this);
 
         // 스크롤 업데이트
-        backgroundY += 1;
+        backgroundY += 1 + stageNum; // 스테이지에 따른 배경 스크롤 속도 증가
         if (backgroundY >= bgHeight) {
             backgroundY = 0;
         }
@@ -183,7 +186,7 @@ public class StageGamePanel extends JPanel implements ActionListener, KeyListene
 
         // 적 이동
         for (Enemy enemy : enemies) {
-            enemy.move(0, 2);
+            enemy.move(0, 2 + stageNum); // 스테이지에 따라 속도 증가
         }
 
         // 탄환 업데이트

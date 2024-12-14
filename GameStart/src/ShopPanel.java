@@ -31,7 +31,7 @@ public class ShopPanel extends JPanel {
                 Player player = manager.getPlayer();
                 if (player.getGold() >= weaponID * 100) {
                     player.addGold(-(weaponID * 100));
-                    player.setWeapon(new Weapon(weaponSprites[0], 3, weaponID * 10, 5, bulletFrames));
+                    player.setWeapon(new Weapon(weaponSprites[0], 3, weaponID * 10, 300, bulletFrames));
                     JOptionPane.showMessageDialog(this, "Weapon " + weaponID + " purchased!");
                 } else {
                     JOptionPane.showMessageDialog(this, "Not enough gold!");

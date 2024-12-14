@@ -10,6 +10,8 @@ public class Player extends Character {
     private int currentHP;
     private int gold;
     public int weaponNum = 1;
+    private double attackSpeed = 1000.0; // 공격 속도 (초당 2발)
+    private long lastAttackTime = 0; // 마지막 발사 시간 기록 (밀리초 단위)
 
     private boolean invincible;  // 무적 상태
     private long invincibleStartTime;  // 무적 시작 시간
@@ -24,7 +26,7 @@ public class Player extends Character {
             BufferedImage[] weaponSprites = loadSpriteSheet("/Weapon/weapon-Sheet"+weaponNum+".png", 72, 72);
             BufferedImage[] bulletFrames = loadSpriteSheet("/Weapon/bullet-Sheet"+weaponNum+".png", 6, 4);
 
-            Weapon defaultWeapon = new Weapon(weaponSprites[0], 3, 10, 3, bulletFrames);
+            Weapon defaultWeapon = new Weapon(weaponSprites[0], 3, 100, 8, bulletFrames);
 
             // 초기 상태 설정
             this.sprite = playerSprites[0];
@@ -174,7 +176,24 @@ public class Player extends Character {
     public int getGold() {
         return gold;
     }
+    
+    public void shoot() {
+        long currentTime = System.currentTimeMillis();
+        if (currentTime - lastAttackTime >= 1000 / attackSpeed) {
+            // 총알 발사
+            weapon.shoot(x, y);
+            lastAttackTime = currentTime; // 마지막 발사 시간 업데이트
+        }
+    }
 
+    public double getAttackSpeed() {
+        return attackSpeed;
+    }
+
+    public void setAttackSpeed(double attackSpeed) {
+        this.attackSpeed = attackSpeed;
+    }
+    
     public void reduceAttackCycle(double amount) {
         if (weapon != null) {
             weapon.reduceFireRate(amount);

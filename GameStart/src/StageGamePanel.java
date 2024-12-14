@@ -25,6 +25,7 @@ public class StageGamePanel extends JPanel implements ActionListener, KeyListene
     private Clip shootSound; // 총 소리 클립
     private Clip backgroundMusic; // 배경 음악 클립
     private Random random = new Random(); // 랜덤 위치 생성을 위한 Random 객체
+    private boolean isShooting;
 
     public StageGamePanel(GameManager manager, int stageNum) {
         this.manager = manager;
@@ -140,17 +141,13 @@ public class StageGamePanel extends JPanel implements ActionListener, KeyListene
     private void drawBackground(Graphics g) {
         int panelWidth = getWidth();
         int panelHeight = getHeight();
-        int bgWidth = background.getWidth();
         int bgHeight = background.getHeight();
 
+        // 배경 이미지의 반복적 그리기
         g.drawImage(background, 0, backgroundY, panelWidth, panelHeight, this);
+        g.drawImage(background, 0, backgroundY - bgHeight, panelWidth, panelHeight, this);
 
-        if (backgroundY > 0) {
-            g.drawImage(background, 0, backgroundY - bgHeight, panelWidth, panelHeight, this);
-        } else {
-            g.drawImage(background, 0, backgroundY + bgHeight, panelWidth, panelHeight, this);
-        }
-
+        // 스크롤 업데이트
         backgroundY += 1;
         if (backgroundY >= bgHeight) {
             backgroundY = 0;
@@ -159,40 +156,47 @@ public class StageGamePanel extends JPanel implements ActionListener, KeyListene
 
     @Override
     public void actionPerformed(ActionEvent e) {
-    	if (enemies.isEmpty() && !goalVisible) {
-    	    // 적이 모두 제거되면 목표를 랜덤 위치에 생성
-    	    int randomX = random.nextInt(getWidth() - goal.width);
-    	    int randomY = random.nextInt(getHeight() - goal.height);
-    	    
-    	    // 배경 스크롤을 고려한 y 위치 설정
-    	    goal.setLocation(randomX, randomY - backgroundY);
-    	    goalVisible = true;
-    	}     updateGame();
+        updateGame();
         checkCollisions();
+
+        // 자동 발사 로직
+        if (isShooting) {
+            player.shoot();
+            playShootSound();
+        }
+
         repaint();
     }
 
     private void updateGame() {
+        // 키 입력에 따른 플레이어 이동
         if (keys[KeyEvent.VK_A]) player.move(-20, 0);
         if (keys[KeyEvent.VK_D]) player.move(20, 0);
         if (keys[KeyEvent.VK_W]) player.move(0, -20);
         if (keys[KeyEvent.VK_S]) player.move(0, 20);
 
+        // 적 이동
         for (Enemy enemy : enemies) {
             enemy.move(0, 2);
         }
 
+        // 탄환 업데이트
         player.getWeapon().updateBullets();
 
+        // 목표 생성 (중복 제거)
         if (enemies.isEmpty() && !goalVisible) {
-            // 적이 모두 제거되면 목표를 랜덤 위치에 생성
-            int randomX = random.nextInt(getWidth() - goal.width);
-            int randomY = random.nextInt(getHeight() - goal.height);
-            goal.setLocation(randomX, randomY + backgroundY);
-            goalVisible = true;
+            generateGoal();
         }
     }
 
+    private void generateGoal() {
+        // 목표를 화면 내 무작위 위치에 생성
+        int randomX = random.nextInt(getWidth() - goal.width);
+        int randomY = random.nextInt(getHeight() - goal.height);
+        goal.setLocation(randomX, randomY - backgroundY);
+        goalVisible = true;
+    }
+    
     private void checkCollisions() {
         Iterator<Enemy> enemyIterator = enemies.iterator();
         while (enemyIterator.hasNext()) {
@@ -230,17 +234,21 @@ public class StageGamePanel extends JPanel implements ActionListener, KeyListene
     @Override
     public void keyPressed(KeyEvent e) {
         keys[e.getKeyCode()] = true;
+
+        // 발사 키 처리
         if (e.getKeyCode() == KeyEvent.VK_M) {
-            player.getWeapon().shoot(player.getX(), player.getY());
-            playShootSound();
-        }
+            isShooting = true;
+            }
     }
 
-    @Override
     public void keyReleased(KeyEvent e) {
         keys[e.getKeyCode()] = false;
-    }
 
+        // 총알 발사 중지
+        if (e.getKeyCode() == KeyEvent.VK_M) {
+            isShooting = false;
+        }
+    }
     @Override
     public void keyTyped(KeyEvent e) {}
 }

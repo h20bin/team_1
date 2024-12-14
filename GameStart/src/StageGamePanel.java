@@ -51,7 +51,6 @@ public class StageGamePanel extends JPanel implements ActionListener, KeyListene
         for (int i = 0; i < stageNum * 5; i++) {
             BufferedImage enemySprite = null;
             try {
-                // 파일 경로를 통해 리소스를 로드
                 enemySprite = new SpriteSheet("/Character/bora-sheet.png", 36, 36).getFrame(i % 4);
             } catch (IOException e) {
                 e.printStackTrace();
@@ -101,6 +100,13 @@ public class StageGamePanel extends JPanel implements ActionListener, KeyListene
             backgroundMusic.loop(Clip.LOOP_CONTINUOUSLY);
         } catch (Exception e) {
             e.printStackTrace();
+        }
+    }
+
+    private void stopBackgroundMusic() {
+        if (backgroundMusic != null && backgroundMusic.isRunning()) {
+            backgroundMusic.stop();
+            backgroundMusic.close();
         }
     }
 
@@ -196,7 +202,7 @@ public class StageGamePanel extends JPanel implements ActionListener, KeyListene
         goal.setLocation(randomX, randomY - backgroundY);
         goalVisible = true;
     }
-    
+
     private void checkCollisions() {
         Iterator<Enemy> enemyIterator = enemies.iterator();
         while (enemyIterator.hasNext()) {
@@ -225,11 +231,15 @@ public class StageGamePanel extends JPanel implements ActionListener, KeyListene
             if (player.getBounds().intersects(goalBounds)) {
                 JOptionPane.showMessageDialog(this, "Stage Cleared!");
                 player.addGold(100);
+
+                // 음악 멈춤
+                stopBackgroundMusic();
+
                 manager.switchPanel(new LobbyPanel(manager));
                 timer.stop();
             }
         }
-        }
+    }
 
     @Override
     public void keyPressed(KeyEvent e) {
@@ -238,9 +248,10 @@ public class StageGamePanel extends JPanel implements ActionListener, KeyListene
         // 발사 키 처리
         if (e.getKeyCode() == KeyEvent.VK_M) {
             isShooting = true;
-            }
+        }
     }
 
+    @Override
     public void keyReleased(KeyEvent e) {
         keys[e.getKeyCode()] = false;
 
@@ -249,6 +260,7 @@ public class StageGamePanel extends JPanel implements ActionListener, KeyListene
             isShooting = false;
         }
     }
+
     @Override
     public void keyTyped(KeyEvent e) {}
 }

@@ -5,9 +5,12 @@ import java.io.IOException;
 public class LobbyPanel extends JPanel {
     private GameManager manager;
     private ImageIcon lobbybackgroundImageIcon;
+    private Image[] characterImage;  // 캐릭터 이미지를 담을 변수
+    private Player player;
 
     public LobbyPanel(GameManager manager) {
         this.manager = manager;
+        this.player = manager.getPlayer();
         setLayout(null);
         
         lobbybackgroundImageIcon = new ImageIcon(getClass().getResource("/background/lobbyback.jpeg"));
@@ -18,8 +21,9 @@ public class LobbyPanel extends JPanel {
         playerLabel.setBounds(150, 50, 200, 30);
         add(playerLabel);
 
+        // 버튼을 캐릭터 이미지 아래로 더 내려주기
         JButton shopButton = new JButton("Shop");
-        shopButton.setBounds(100, 250, 100, 50);
+        shopButton.setBounds(100, 380, 100, 50); // y 좌표를 380으로 설정
         shopButton.addActionListener(e -> {
             try {
                 manager.switchPanel(new ShopPanel(manager));
@@ -30,12 +34,12 @@ public class LobbyPanel extends JPanel {
         add(shopButton);
 
         JButton stageButton = new JButton("Stage");
-        stageButton.setBounds(200, 250, 100, 50);
+        stageButton.setBounds(200, 380, 100, 50); // y 좌표를 380으로 설정
         stageButton.addActionListener(e -> manager.switchPanel(new StagePanel(manager)));
         add(stageButton);
 
         JButton forgeButton = new JButton("Forge");
-        forgeButton.setBounds(300, 250, 100, 50);
+        forgeButton.setBounds(300, 380, 100, 50); // y 좌표를 380으로 설정
         forgeButton.addActionListener(e -> manager.switchPanel(new ForgePanel(manager)));
         add(forgeButton);
     }
@@ -53,6 +57,8 @@ public class LobbyPanel extends JPanel {
             Image backgroundImage = lobbybackgroundImageIcon.getImage(); // ImageIcon에서 Image 객체 추출
             g.drawImage(backgroundImage, 0, 0, getWidth(), getHeight(), this); // 배경 이미지를 패널 크기에 맞게 그리기
         }
+
+        player.render(g);
 
         // HUD 정보 표시
         Player player = manager.getPlayer();

@@ -262,6 +262,7 @@ public class StageGamePanel extends JPanel implements ActionListener, KeyListene
             for (Bullet bullet : player.getWeapon().getBullets()) {
                 if (enemyBounds.intersects(bullet.getBounds())) {
                     enemy.takeDamage(bullet.getDamage());
+                    bullet.onCollision();
                     if (enemy.getHealth() <= 0) {
                         enemyIterator.remove();
                         player.addGold(10);

@@ -33,6 +33,7 @@ public class ShopPanel extends JPanel {
         // 무기 버튼 추가
         JButton weaponButton1 = new JButton("Weapon - Cost: " + (weaponID[0]) + " Gold");
         weaponButton1.setBounds(90, yPosition, 300, 50);
+        weaponButton1.setFont(new Font("Arial", Font.PLAIN, 16));
         weaponButton1.setToolTipText("Purchase Weapon 1 for " + (weaponID[0] * 100) + " Gold");
 
         weaponButton1.addActionListener(e -> {
@@ -51,6 +52,7 @@ public class ShopPanel extends JPanel {
 
         JButton weaponButton2 = new JButton("Weapon - Cost: " + (weaponID[1] * 100) + " Gold");
         weaponButton2.setBounds(90, yPosition, 300, 50);
+        weaponButton2.setFont(new Font("Arial", Font.PLAIN, 16));
         weaponButton2.setToolTipText("Purchase Weapon 2 for " + (weaponID[1] * 100) + " Gold");
 
         weaponButton2.addActionListener(e -> {
@@ -69,6 +71,7 @@ public class ShopPanel extends JPanel {
 
         JButton weaponButton3 = new JButton("Weapon - Cost: " + (weaponID[2] * 100) + " Gold");
         weaponButton3.setBounds(90, yPosition, 300, 50);
+        weaponButton3.setFont(new Font("Arial", Font.PLAIN, 16));
         weaponButton3.setToolTipText("Purchase Weapon 3 for " + (weaponID[2] * 100) + " Gold");
 
         weaponButton3.addActionListener(e -> {
@@ -85,12 +88,22 @@ public class ShopPanel extends JPanel {
         add(weaponButton3);
         yPosition += 30;
 
-     // Go back to lobby 버튼 크기 변경
+        // Go back to lobby 버튼 크기 변경
         JButton lobbyButton = new JButton("Go to Lobby");
         lobbyButton.setBounds(140, 400, 200, 60);  // 크기와 위치 변경
+        lobbyButton.setFont(new Font("Arial", Font.BOLD, 18));
+        lobbyButton.setBackground(Color.CYAN);
+        lobbyButton.setForeground(Color.BLACK);
+        lobbyButton.setFocusPainted(false);
         lobbyButton.addActionListener(e -> manager.switchPanel(new LobbyPanel(manager)));
         add(lobbyButton);
 
+        // 추가적인 UI 요소 - 구매 가능 골드 표시
+        JLabel goldLabel = new JLabel("Gold: " + manager.getPlayer().getGold(), SwingConstants.CENTER);
+        goldLabel.setFont(new Font("Arial", Font.BOLD, 18));
+        goldLabel.setBounds(90, 460, 300, 40);
+        goldLabel.setForeground(Color.YELLOW);
+        add(goldLabel);
     }
 
     // 유틸리티 메서드: 스프라이트 시트를 로드합니다.

@@ -26,6 +26,8 @@ public class StageGamePanel extends JPanel implements ActionListener, KeyListene
     private Clip backgroundMusic; // 배경 음악 클립
     private Random random = new Random(); // 랜덤 위치 생성을 위한 Random 객체
     private boolean isShooting;
+    private int stageNum;
+    private BufferedImage starImage;
 
     private JButton pauseButton; // 일시정지 버튼
 
@@ -37,7 +39,23 @@ public class StageGamePanel extends JPanel implements ActionListener, KeyListene
         initializeStage(stageNum);
         loadShootSound(); // 총 소리 로드
         loadBackgroundMusic(); // 배경 음악 로드
+        
+        // 별 이미지 로드 시 알파 채널을 처리하도록 수정
+        try {
+            starImage = ImageIO.read(Paths.get("GameStart/src/background/star.png").toFile());
+            if (starImage.getType() != BufferedImage.TYPE_INT_ARGB) {
+                BufferedImage temp = new BufferedImage(starImage.getWidth(), starImage.getHeight(), BufferedImage.TYPE_INT_ARGB);
+                Graphics g = temp.createGraphics();
+                g.drawImage(starImage, 0, 0, null);
+                g.dispose();
+                starImage = temp; // 알파 채널을 지원하는 형식으로 변환
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+            starImage = new BufferedImage(1, 1, BufferedImage.TYPE_INT_ARGB); // 오류 발생 시 빈 이미지 생성
+        }
 
+        
         // 게임 루프 시작
         timer = new Timer(16, this);
         timer.start();
@@ -161,8 +179,8 @@ public class StageGamePanel extends JPanel implements ActionListener, KeyListene
 
         // 목표 지점 (별) 렌더링
         if (goalVisible) {
-            g.setColor(Color.YELLOW);
-            g.fillRect(goal.x, goal.y + backgroundY, goal.width, goal.height);
+        	g.drawImage(starImage, goal.x, goal.y + backgroundY, goal.width, goal.height, this);
+
         }
 
         // HUD (체력, 골드 표시)

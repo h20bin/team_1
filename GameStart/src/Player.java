@@ -233,9 +233,10 @@ public class Player extends Character {
     private BufferedImage[] loadSpriteSheet(String resourcePath, int frameWidth, int frameHeight) throws IOException {
         return new SpriteSheet(resourcePath, frameWidth, frameHeight).getAllFrames();
     }
-
+    
     public void increaseMaxHP(double d) {
         this.maxHP += d;
+        this.currentHP = this.maxHP; // 최대 HP가 증가하면, 현재 HP도 최대 HP로 설정
     }
 
     public void play() {

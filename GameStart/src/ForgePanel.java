@@ -1,5 +1,6 @@
 import javax.swing.*;
 import java.awt.*;
+import java.io.*;
 
 public class ForgePanel extends JPanel {
     private GameManager manager;
@@ -11,8 +12,12 @@ public class ForgePanel extends JPanel {
     public ForgePanel(GameManager manager) {
         this.manager = manager;
         setLayout(null);
-        
+
+        // 배경 이미지를 로드
         forgebackgroundImageIcon = new ImageIcon(getClass().getResource("/background/forgeback.jpeg"));
+        
+        // 업그레이드 비용을 파일에서 로드
+        loadUpgradeCosts();
 
         JLabel title = new JLabel("Forge", SwingConstants.CENTER);
         title.setFont(new Font("Arial", Font.BOLD, 24));
@@ -21,48 +26,51 @@ public class ForgePanel extends JPanel {
 
         int yPosition = 100;
 
-        // Upgrade MaxHP
+        // MaxHP 업그레이드 버튼
         JButton hpButton = new JButton("Upgrade MaxHP - " + hpUpgradeCost + " Gold");
         hpButton.setBounds(50, yPosition, 300, 50);
         hpButton.addActionListener(e -> attemptUpgrade("MaxHP", hpUpgradeCost, () -> {
             Player player = manager.getPlayer();
             player.increaseMaxHP(10);
             JOptionPane.showMessageDialog(this, "MaxHP upgraded!");
-            // 50골드씩 증가
-            hpUpgradeCost += 50;
+            hpUpgradeCost += 50; // 업그레이드 비용 증가
+            player.addGold(50);  // 골드 50 증가
             hpButton.setText("Upgrade MaxHP - " + hpUpgradeCost + " Gold");
+            saveUpgradeCosts();  // 업그레이드 비용 저장
         }));
         add(hpButton);
         yPosition += 60;
 
-        // Upgrade MaxSpeed
+        // MaxSpeed 업그레이드 버튼
         JButton speedButton = new JButton("Upgrade MaxSpeed - " + speedUpgradeCost + " Gold");
         speedButton.setBounds(50, yPosition, 300, 50);
         speedButton.addActionListener(e -> attemptUpgrade("MaxSpeed", speedUpgradeCost, () -> {
             Player player = manager.getPlayer();
             player.increaseMaxSpeed(0.1);
             JOptionPane.showMessageDialog(this, "MaxSpeed upgraded!");
-            // 50골드씩 증가
-            speedUpgradeCost += 50;
+            speedUpgradeCost += 50; // 업그레이드 비용 증가
+            player.addGold(50);     // 골드 50 증가
             speedButton.setText("Upgrade MaxSpeed - " + speedUpgradeCost + " Gold");
+            saveUpgradeCosts();     // 업그레이드 비용 저장
         }));
         add(speedButton);
         yPosition += 60;
 
-        // Upgrade Attack Cycle
+        // Attack Cycle 업그레이드 버튼
         JButton attackCycleButton = new JButton("Upgrade Attack Cycle - " + attackCycleUpgradeCost + " Gold");
         attackCycleButton.setBounds(50, yPosition, 300, 50);
         attackCycleButton.addActionListener(e -> attemptUpgrade("Attack Cycle", attackCycleUpgradeCost, () -> {
             Player player = manager.getPlayer();
             player.reduceAttackCycle(0.1);
             JOptionPane.showMessageDialog(this, "Attack Cycle upgraded!");
-            // 50골드씩 증가
-            attackCycleUpgradeCost += 50;
+            attackCycleUpgradeCost += 50; // 업그레이드 비용 증가
+            player.addGold(50);           // 골드 50 증가
             attackCycleButton.setText("Upgrade Attack Cycle - " + attackCycleUpgradeCost + " Gold");
+            saveUpgradeCosts();           // 업그레이드 비용 저장
         }));
         add(attackCycleButton);
 
-        // Go back to lobby
+        // Lobby로 돌아가기 버튼
         JButton lobbyButton = new JButton("Go to Lobby");
         lobbyButton.setBounds(150, 400, 100, 50);
         lobbyButton.addActionListener(e -> manager.switchPanel(new LobbyPanel(manager)));
@@ -73,13 +81,35 @@ public class ForgePanel extends JPanel {
         Player player = manager.getPlayer();
         if (player.getGold() >= cost) {
             player.addGold(-cost);
-            if (Math.random() < 0.8) { // 80% success rate
+            if (Math.random() < 0.8) { // 80% 성공률
                 upgradeAction.run();
             } else {
                 JOptionPane.showMessageDialog(this, "Upgrade failed!");
             }
         } else {
             JOptionPane.showMessageDialog(this, "Not enough gold!");
+        }
+    }
+    // 업그레이드 비용을 파일에 저장하는 메서드
+    private void saveUpgradeCosts() {
+        try (ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream("upgradeCosts.dat"))) {
+            oos.writeInt(hpUpgradeCost);
+            oos.writeInt(speedUpgradeCost);
+            oos.writeInt(attackCycleUpgradeCost);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    // 업그레이드 비용을 파일에서 불러오는 메서드
+    private void loadUpgradeCosts() {
+        try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream("upgradeCosts.dat"))) {
+            this.hpUpgradeCost = ois.readInt();
+            this.speedUpgradeCost = ois.readInt();
+            this.attackCycleUpgradeCost = ois.readInt();
+        } catch (IOException e) {
+            // 파일이 없거나 오류가 생기면 기본값을 사용
+            System.out.println("No saved upgrade costs found, using default values.");
         }
     }
 

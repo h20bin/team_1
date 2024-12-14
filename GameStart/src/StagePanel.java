@@ -16,14 +16,14 @@ public class StagePanel extends JPanel {
         // 제목 라벨을 설정 (스윙 컴포넌트의 레이아웃 관리자가 없으면 위치를 직접 설정)
         JLabel title = new JLabel("Choose Stage", SwingConstants.CENTER);
         title.setFont(new Font("Arial", Font.BOLD, 24));
-        title.setBounds(50, 20, 300, 50);
+        title.setBounds(80, 20, 300, 50);
         add(title);
 
         // 10개의 스테이지 버튼을 배열에 저장
         stageButtons = new JButton[10];  // 10개의 스테이지 버튼을 저장할 배열
 
         // 스테이지 버튼들을 화면에 배치할 y좌표 시작값
-        int yPosition = 100;
+        int yPosition = 80;
 
         // 1부터 10까지의 스테이지 버튼을 생성하고 배치
         for (int i = 1; i <= 10; i++) {
@@ -31,7 +31,7 @@ public class StagePanel extends JPanel {
 
             // 버튼 생성: "Stage " + i로 버튼 라벨 설정
             stageButtons[i - 1] = new JButton("Stage " + stageNum);
-            stageButtons[i - 1].setBounds(50, yPosition, 300, 50);  // 버튼 위치와 크기 설정
+            stageButtons[i - 1].setBounds(80, yPosition, 300, 50);  // 버튼 위치와 크기 설정
 
             // 버튼 클릭 시 실행할 동작 설정
             stageButtons[i - 1].addActionListener(e -> {
@@ -54,7 +54,7 @@ public class StagePanel extends JPanel {
 
         // 로비로 돌아가기 버튼 생성
         JButton lobbyButton = new JButton("Go to Lobby");
-        lobbyButton.setBounds(150, 700, 100, 50);  // 버튼 위치를 조정 (여기서는 yPosition에 맞춰 설정)
+        lobbyButton.setBounds(160, 680, 150, 50);  // 버튼 위치를 조정 (여기서는 yPosition에 맞춰 설정)
         lobbyButton.addActionListener(e -> manager.switchPanel(new LobbyPanel(manager)));  // 클릭 시 로비 화면으로 전환
         add(lobbyButton);
     }

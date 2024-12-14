@@ -19,9 +19,17 @@ public class Weapon {
         this.bulletFrames = bulletFrames;
     }
 
-    public void shoot(int x, int y) {
-        bullets.add(new Bullet(x, y, bulletSpeed, damage, bulletFrames));
+    public void shoot(int weaponX, int weaponY) {
+        // 무기의 중심 좌표 계산
+        int leftBulletX = weaponX + sprite.getWidth() / 4 - bulletFrames[0].getWidth() / 2; // 왼쪽 탄환
+        int rightBulletX = weaponX + (3 * sprite.getWidth()) / 4 - bulletFrames[0].getWidth() / 2; // 오른쪽 탄환
+        int bulletY = weaponY - bulletFrames[0].getHeight() + 20; // 탄환의 Y 좌표 (무기 상단 바로 위)
+
+        // 탄환 두 개 추가 (왼쪽, 오른쪽)
+        bullets.add(new Bullet(leftBulletX, bulletY, bulletSpeed, damage, bulletFrames));
+        bullets.add(new Bullet(rightBulletX, bulletY, bulletSpeed, damage, bulletFrames));
     }
+
 
     public void render(Graphics g, int x, int y) {
         g.drawImage(sprite, x, y, null);

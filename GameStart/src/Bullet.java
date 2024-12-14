@@ -35,7 +35,7 @@ public class Bullet {
 
 	public int getY() {
 		// TODO Auto-generated method stub
-		return 0;
+		return this.y;
 	}
 
 	public Rectangle getBounds() { 

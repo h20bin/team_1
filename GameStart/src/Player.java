@@ -9,6 +9,7 @@ public class Player extends Character {
     private int maxHP;
     private int currentHP;
     private int gold;
+    public int weaponNum = 1;
 
     private boolean invincible;  // 무적 상태
     private long invincibleStartTime;  // 무적 시작 시간
@@ -19,11 +20,11 @@ public class Player extends Character {
 
         try {
             // 스프라이트 및 무기 데이터 로드
-            BufferedImage[] playerSprites = loadSpriteSheet("/Character/body-Sheet1.png", 72, 72);
-            BufferedImage[] weaponSprites = loadSpriteSheet("/Weapon/weapon-Sheet1.png", 72, 72);
-            BufferedImage[] bulletFrames = loadSpriteSheet("/Weapon/bullet-Sheet1.png", 6, 4);
+            BufferedImage[] playerSprites = loadSpriteSheet("/Character/body-Sheet"+weaponNum+".png", 72, 72);
+            BufferedImage[] weaponSprites = loadSpriteSheet("/Weapon/weapon-Sheet"+weaponNum+".png", 72, 72);
+            BufferedImage[] bulletFrames = loadSpriteSheet("/Weapon/bullet-Sheet"+weaponNum+".png", 6, 4);
 
-            Weapon defaultWeapon = new Weapon(weaponSprites[0], 3, 10, 5, bulletFrames);
+            Weapon defaultWeapon = new Weapon(weaponSprites[0], 3, 10, 3, bulletFrames);
 
             // 초기 상태 설정
             this.sprite = playerSprites[0];

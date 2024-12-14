@@ -18,8 +18,8 @@ public class StagePanel extends JPanel {
 
         int yPosition = 100;
 
-        // 스테이지 버튼 생성
-        for (int i = 1; i <= 4; i++) {
+        // 스테이지 버튼 생성 (1부터 10까지)
+        for (int i = 1; i <= 10; i++) {
             int stageNum = i;
             JButton stageButton = new JButton("Stage " + stageNum);
             stageButton.setBounds(50, yPosition, 300, 50);
@@ -27,12 +27,12 @@ public class StagePanel extends JPanel {
                 manager.switchPanel(new StageGamePanel(manager, stageNum));
             });
             add(stageButton);
-            yPosition += 60;
+            yPosition += 60;  // 버튼 간격
         }
 
         // 로비로 돌아가기 버튼
         JButton lobbyButton = new JButton("Go to Lobby");
-        lobbyButton.setBounds(150, 400, 100, 50);
+        lobbyButton.setBounds(150, 700, 100, 50);  // 버튼 위치를 조정 (여기서는 yPosition에 맞춰 설정)
         lobbyButton.addActionListener(e -> manager.switchPanel(new LobbyPanel(manager)));
         add(lobbyButton);
     }

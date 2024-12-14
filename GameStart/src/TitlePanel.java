@@ -10,11 +10,15 @@ import java.io.IOException;
 import java.io.InputStream;
 
 public class TitlePanel extends JPanel {
-    
+
     private GameManager manager; // 게임 관리 객체
     private ImageIcon mainbackgroundImageIcon; // 배경 이미지 아이콘
     private Thread musicThread; // 배경 음악을 재생할 스레드
     private Clip musicClip; // 배경 음악 클립
+    private JButton startButton; // 시작 버튼
+    private JButton resetButton; // 리셋 버튼
+    private JButton gameInfoButton; // 게임 정보 버튼
+    private JButton exitButton; // 종료 버튼
 
     // TitlePanel 생성자
     public TitlePanel(GameManager manager) {
@@ -26,8 +30,16 @@ public class TitlePanel extends JPanel {
         // 배경 이미지 초기화
         mainbackgroundImageIcon = new ImageIcon(getClass().getResource("/background/mainback.jpg"));
         
-        // 시작 버튼 생성 및 위치 설정
-        JButton startButton = new JButton("Start");
+        // 버튼 생성 및 설정
+        createButtons();
+        
+        // 배경 음악 시작
+        startBackgroundMusic();
+    }
+
+    // 버튼 생성 및 설정 메서드
+    private void createButtons() {
+        startButton = new JButton("Start");
         startButton.setBounds(180, 150, 100, 50);
         
         // 시작 버튼 클릭 시 이벤트 처리
@@ -39,8 +51,7 @@ public class TitlePanel extends JPanel {
         // 시작 버튼 패널에 추가
         add(startButton);
 
-        // 리셋 버튼 생성 및 위치 설정
-        JButton resetButton = new JButton("Reset");
+        resetButton = new JButton("Reset");
         resetButton.setBounds(180, 220, 100, 50);
         
         // 리셋 버튼 클릭 시 이벤트 처리
@@ -52,16 +63,14 @@ public class TitlePanel extends JPanel {
         // 리셋 버튼 패널에 추가
         add(resetButton);
 
-        // 게임 정보 버튼 생성 및 위치 설정
-        JButton gameInfoButton = new JButton("Game Info");
+        gameInfoButton = new JButton("Game Info");
         gameInfoButton.setBounds(180, 290, 100, 50);
         
         // 게임 정보 버튼 클릭 시 이벤트 처리
         gameInfoButton.addActionListener(e -> showGameInfo()); // 게임 설명 표시
         add(gameInfoButton);
         
-        // 종료 버튼 생성 및 위치 설정
-        JButton exitButton = new JButton("Exit");
+        exitButton = new JButton("Exit");
         exitButton.setBounds(180, 360, 100, 50);
         
         // 종료 버튼 클릭 시 이벤트 처리
@@ -72,9 +81,6 @@ public class TitlePanel extends JPanel {
         
         // 종료 버튼 패널에 추가
         add(exitButton);
-        
-        // 배경 음악 시작
-        startBackgroundMusic();
     }
 
     // 패널을 그리는 메서드 (배경 이미지 및 제목 텍스트)

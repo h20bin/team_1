@@ -7,53 +7,98 @@ public abstract class Character {
     protected BufferedImage sprite;
     protected BufferedImage[] wing;
     protected Weapon weapon;
-    
+
     private int currentWingFrame = 0; // 현재 Wing 프레임 인덱스
     private long lastFrameTime = 0; // 마지막 프레임 업데이트 시간
     private int animationSpeed = 10; // 애니메이션 속도 (밀리초 단위)
 
     public Character(int x, int y, BufferedImage sprite, Weapon weapon) {
+        initializePosition(x, y);
+        initializeSprite(sprite);
+        initializeWeapon(weapon);
+    }
+
+    private void initializePosition(int x, int y) {
         this.x = x;
         this.y = y;
+    }
+
+    private void initializeSprite(BufferedImage sprite) {
         this.sprite = sprite;
+    }
+
+    private void initializeWeapon(Weapon weapon) {
         this.weapon = weapon;
     }
 
     public void render(Graphics g) {
-        // Weapon 먼저 그리기
+        renderWeapon(g);
+        renderBody(g);
+        renderWingAnimation(g);
+    }
+
+    private void renderWeapon(Graphics g) {
         if (weapon != null) {
-            weapon.render(g, x, y - 10); // 무기의 위치는 캐릭터를 기준으로
+            weapon.render(g, x, y - 10);
         }
+    }
 
-        // Body 그리기
-        g.drawImage(sprite, x, y, null);
-        
-        // Wing 애니메이션 그리기
+    private void renderBody(Graphics g) {
+        if (sprite != null) {
+            g.drawImage(sprite, x, y, null);
+        }
+    }
+
+    private void renderWingAnimation(Graphics g) {
         if (wing != null && wing.length > 0) {
-            long currentTime = System.currentTimeMillis();
-            if (currentTime - lastFrameTime >= animationSpeed) {
-                currentWingFrame = (currentWingFrame + 1) % wing.length; // 프레임 순환
-                lastFrameTime = currentTime; // 마지막 프레임 시간 갱신
-            }
-
-            g.drawImage(wing[currentWingFrame], x, y, null);
+            updateWingFrame();
+            drawWingFrame(g);
         }
+    }
+
+    private void updateWingFrame() {
+        long currentTime = System.currentTimeMillis();
+        if (currentTime - lastFrameTime >= animationSpeed) {
+            currentWingFrame = (currentWingFrame + 1) % wing.length;
+            lastFrameTime = currentTime;
+        }
+    }
+
+    private void drawWingFrame(Graphics g) {
+        g.drawImage(wing[currentWingFrame], x, y, null);
     }
 
     public abstract void move(int dx, int dy);
 
-	public int getY() {
-		// TODO Auto-generated method stub
-		return this.x;
-	}
+    public int getY() {
+        return retrieveY();
+    }
 
-	public int getX() {
-		// TODO Auto-generated method stub
-		return this.y;
-	}
+    public int getX() {
+        return retrieveX();
+    }
 
-	public Rectangle getBounds() {
-		// TODO Auto-generated method stub
-		return null;
-	}
+    private int retrieveY() {
+        return this.y;
+    }
+
+    private int retrieveX() {
+        return this.x;
+    }
+
+    public Rectangle getBounds() {
+        return generateBounds();
+    }
+
+    private Rectangle generateBounds() {
+        return new Rectangle(x, y, calculateWidth(), calculateHeight());
+    }
+
+    private int calculateWidth() {
+        return (sprite != null) ? sprite.getWidth() : 0;
+    }
+
+    private int calculateHeight() {
+        return (sprite != null) ? sprite.getHeight() : 0;
+    }
 }

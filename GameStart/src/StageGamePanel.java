@@ -12,20 +12,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Random;
 
-import javax.swing.*;
-import java.awt.*;
-import java.awt.event.*;
-import java.awt.image.BufferedImage;
-import java.io.IOException;
-import java.nio.file.Paths;
-import javax.imageio.ImageIO;
-import javax.sound.sampled.*;
-import java.io.File;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Random;
-
 public class StageGamePanel extends JPanel implements ActionListener, KeyListener {
     private GameManager manager;
     private Timer timer;
@@ -40,13 +26,13 @@ public class StageGamePanel extends JPanel implements ActionListener, KeyListene
     private Clip backgroundMusic; // 배경 음악 클립
     private Random random = new Random(); // 랜덤 위치 생성을 위한 Random 객체
     private boolean isShooting;
-    private int stageNum;
+
+    private JButton pauseButton; // 일시정지 버튼
 
     public StageGamePanel(GameManager manager, int stageNum) {
         this.manager = manager;
         this.player = manager.getPlayer();
         this.enemies = new ArrayList<>();
-        this.stageNum = stageNum;
 
         initializeStage(stageNum);
         loadShootSound(); // 총 소리 로드
@@ -60,19 +46,45 @@ public class StageGamePanel extends JPanel implements ActionListener, KeyListene
         setFocusable(true);
         SwingUtilities.invokeLater(() -> requestFocusInWindow());
         addKeyListener(this);
+
+        // 설정 UI 구성
+        createSettingsUI();
     }
 
-    public void initializeStage(int stageNum) {
-        // 스테이지가 시작될 때마다 플레이어의 HP를 업그레이드된 상태로 유지
-        // 예: 스테이지마다 HP를 10씩 업그레이드 (이 부분은 원하는 대로 수정)
-        if (stageNum > 1) {
-            player.increaseMaxHP(10); // 예시로 스테이지마다 10만큼 HP를 증가
-        }
+    private void createSettingsUI() {
+        // 일시정지 버튼
+        pauseButton = new JButton("Pause");
+        pauseButton.setBounds(10, 10, 100, 30);
+        pauseButton.addActionListener(e -> togglePause());
+        this.add(pauseButton);
+    }
 
+    private void togglePause() {
+        if (timer.isRunning()) {
+            // 게임이 실행 중일 때 일시정지
+            timer.stop();
+            backgroundMusic.stop(); // 배경 음악 멈추기
+            JOptionPane.showMessageDialog(this, "Game Paused");
+            // 일시정지 상태에서는 키 입력 비활성화
+            setFocusable(false);
+        } else {
+            // 게임이 일시정지 상태일 때 복구
+            timer.start();
+            backgroundMusic.setFramePosition(0); // 배경 음악을 처음으로 되돌리기
+            backgroundMusic.start(); // 음악 다시 시작
+            JOptionPane.showMessageDialog(this, "Game Resumed");
+            // 일시정지 해제되면 키 입력 활성화
+            setFocusable(true);
+            requestFocusInWindow();  // 포커스를 다시 설정하여 키 입력을 받을 수 있게 함
+        }
+    }
+
+    private void initializeStage(int stageNum) {
         // 적 생성
         for (int i = 0; i < stageNum * 5; i++) {
             BufferedImage enemySprite = null;
             try {
+                // 파일 경로를 통해 리소스를 로드
                 enemySprite = new SpriteSheet("/Character/bora-sheet.png", 36, 36).getFrame(i % 4);
             } catch (IOException e) {
                 e.printStackTrace();
@@ -83,9 +95,11 @@ public class StageGamePanel extends JPanel implements ActionListener, KeyListene
                 g.dispose();
             }
 
-            Weapon enemyWeapon = new Weapon(enemySprite, 3 + stageNum, 5, 2, new BufferedImage[0]); // 난이도 증가
-            enemies.add(new Enemy(50 + (i * 40) % 300, -100 - (i * 80), 50 + stageNum * 10, enemySprite, enemyWeapon));
+            Weapon enemyWeapon = new Weapon(enemySprite, 3, 5, 2, new BufferedImage[0]);
+            enemies.add(new Enemy(50 + (i * 40) % 300, -100 - (i * 80), 50, enemySprite, enemyWeapon));
         }
+
+        player.reset();
 
         // 목표 지점 초기화
         goal = new Rectangle(0, 0, 40, 40); // 초기에는 화면 밖에 설정
@@ -123,13 +137,6 @@ public class StageGamePanel extends JPanel implements ActionListener, KeyListene
         }
     }
 
-    private void stopBackgroundMusic() {
-        if (backgroundMusic != null && backgroundMusic.isRunning()) {
-            backgroundMusic.stop();
-            backgroundMusic.close();
-        }
-    }
-
     private void playShootSound() {
         if (shootSound != null) {
             shootSound.setFramePosition(0);
@@ -162,7 +169,6 @@ public class StageGamePanel extends JPanel implements ActionListener, KeyListene
         g.setColor(Color.WHITE);
         g.drawString("HP: " + player.getCurrentHP() + "/" + player.getMaxHP(), 10, 20);
         g.drawString("Gold: " + player.getGold(), 10, 40);
-        g.drawString("Stage: " + stageNum, 10, 60);
     }
 
     private void drawBackground(Graphics g) {
@@ -175,7 +181,7 @@ public class StageGamePanel extends JPanel implements ActionListener, KeyListene
         g.drawImage(background, 0, backgroundY - bgHeight, panelWidth, panelHeight, this);
 
         // 스크롤 업데이트
-        backgroundY += 1 + stageNum; // 스테이지에 따른 배경 스크롤 속도 증가
+        backgroundY += 1;
         if (backgroundY >= bgHeight) {
             backgroundY = 0;
         }
@@ -204,7 +210,7 @@ public class StageGamePanel extends JPanel implements ActionListener, KeyListene
 
         // 적 이동
         for (Enemy enemy : enemies) {
-            enemy.move(0, 2 + stageNum); // 스테이지에 따라 속도 증가
+            enemy.move(0, 2);
         }
 
         // 탄환 업데이트
@@ -252,12 +258,9 @@ public class StageGamePanel extends JPanel implements ActionListener, KeyListene
             if (player.getBounds().intersects(goalBounds)) {
                 JOptionPane.showMessageDialog(this, "Stage Cleared!");
                 player.addGold(100);
-
-                // 음악 멈춤
-                stopBackgroundMusic();
-
                 manager.switchPanel(new LobbyPanel(manager));
-                timer.stop();
+                backgroundMusic.stop();  // 배경 음악 멈추기
+                timer.stop();  // 게임 루프 중지
             }
         }
     }
@@ -272,7 +275,6 @@ public class StageGamePanel extends JPanel implements ActionListener, KeyListene
         }
     }
 
-    @Override
     public void keyReleased(KeyEvent e) {
         keys[e.getKeyCode()] = false;
 

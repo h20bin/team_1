@@ -23,6 +23,7 @@ public class Player extends Character {
         try {
             // 스프라이트 및 무기 데이터 로드
             BufferedImage[] playerSprites = loadSpriteSheet("/Character/body-Sheet"+weaponNum+".png", 72, 72);
+            BufferedImage[] wingSprites = loadSpriteSheet("/Character/wing-Sheet"+weaponNum+".png", 72, 72); 
             BufferedImage[] weaponSprites = loadSpriteSheet("/Weapon/weapon-Sheet"+weaponNum+".png", 72, 72);
             BufferedImage[] bulletFrames = loadSpriteSheet("/Weapon/bullet-Sheet"+weaponNum+".png", 6, 4);
 
@@ -31,6 +32,7 @@ public class Player extends Character {
             // 초기 상태 설정
             this.sprite = playerSprites[0];
             this.weapon = defaultWeapon;
+            this.wing = wingSprites;
 
         } catch (IOException e) {
             e.printStackTrace();
@@ -199,12 +201,7 @@ public class Player extends Character {
             weapon.reduceFireRate(amount);
         }
     }
-
-    public void increaseMaxHP(int d) {
-        maxHP += d;
-        currentHP = maxHP;
-    }
-
+    
     public Weapon getWeapon() {
         return weapon;
     }

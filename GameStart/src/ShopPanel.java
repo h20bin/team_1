@@ -5,7 +5,7 @@ import java.io.IOException;
 
 public class ShopPanel extends JPanel {
     private GameManager manager;
-    private int[] weaponID = {1,2,3,4,5};
+    private int[] weaponID = {1, 2, 3, 4, 5};
     private int yPosition = 100;
     private ImageIcon shopbackgroundImageIcon;
 
@@ -15,25 +15,25 @@ public class ShopPanel extends JPanel {
         shopbackgroundImageIcon = new ImageIcon(getClass().getResource("/background/shopback.jpeg"));
 
         JLabel title = new JLabel("Shop", SwingConstants.CENTER);
-        title.setFont(new Font("Arial", Font.BOLD, 24));
-        title.setBounds(50, 20, 300, 50);
+        title.setFont(new Font("Arial", Font.BOLD, 40));
+        title.setBounds(95, 30, 300, 50);
         title.setForeground(Color.WHITE);
         add(title);
 
         // 무기 스프라이트와 총알 프레임 준비
-        BufferedImage[] weaponSprites1 = loadSpriteSheet("/Weapon/weapon-Sheet"+ weaponID[0] +".png", 72, 72);
-        BufferedImage[] bulletFrames1 = loadSpriteSheet("/Weapon/bullet-Sheet"+ weaponID[0] +".png", 6, 4);   
-        
-        BufferedImage[] weaponSprites2 = loadSpriteSheet("/Weapon/weapon-Sheet"+ weaponID[1] +".png", 72, 72);
-        BufferedImage[] bulletFrames2 = loadSpriteSheet("/Weapon/bullet-Sheet"+ weaponID[1] +".png", 24, 30);    
-        
-        BufferedImage[] weaponSprites3 = loadSpriteSheet("/Weapon/weapon-Sheet"+ weaponID[2] +".png", 72, 72);
-        BufferedImage[] bulletFrames3 = loadSpriteSheet("/Weapon/bullet-Sheet"+ weaponID[2] +".png", 24, 30);    
+        BufferedImage[] weaponSprites1 = loadSpriteSheet("/Weapon/weapon-Sheet" + weaponID[0] + ".png", 72, 72);
+        BufferedImage[] bulletFrames1 = loadSpriteSheet("/Weapon/bullet-Sheet" + weaponID[0] + ".png", 6, 4);
 
-        
-        
+        BufferedImage[] weaponSprites2 = loadSpriteSheet("/Weapon/weapon-Sheet" + weaponID[1] + ".png", 72, 72);
+        BufferedImage[] bulletFrames2 = loadSpriteSheet("/Weapon/bullet-Sheet" + weaponID[1] + ".png", 24, 30);
+
+        BufferedImage[] weaponSprites3 = loadSpriteSheet("/Weapon/weapon-Sheet" + weaponID[2] + ".png", 72, 72);
+        BufferedImage[] bulletFrames3 = loadSpriteSheet("/Weapon/bullet-Sheet" + weaponID[2] + ".png", 24, 30);
+
+        // 무기 버튼 추가
         JButton weaponButton1 = new JButton("Weapon - Cost: " + (weaponID[0]) + " Gold");
-        weaponButton1.setBounds(50, yPosition, 300, 50);
+        weaponButton1.setBounds(90, yPosition, 300, 50);
+        weaponButton1.setToolTipText("Purchase Weapon 1 for " + (weaponID[0] * 100) + " Gold");
 
         weaponButton1.addActionListener(e -> {
             Player player = manager.getPlayer();
@@ -45,29 +45,31 @@ public class ShopPanel extends JPanel {
                 JOptionPane.showMessageDialog(this, "Not enough gold!");
             }
         });
-        
+
         add(weaponButton1);
         yPosition += 60;
-        
+
         JButton weaponButton2 = new JButton("Weapon - Cost: " + (weaponID[1] * 100) + " Gold");
-        weaponButton2.setBounds(50, yPosition, 300, 50);
+        weaponButton2.setBounds(90, yPosition, 300, 50);
+        weaponButton2.setToolTipText("Purchase Weapon 2 for " + (weaponID[1] * 100) + " Gold");
 
         weaponButton2.addActionListener(e -> {
             Player player = manager.getPlayer();
             if (player.getGold() >= weaponID[1] * 100) {
-                player.addGold(-( weaponID[1] * 100));
-                player.setWeapon(new Weapon(weaponSprites2[0], 3,  weaponID[1] * 100, 20, bulletFrames2));
+                player.addGold(-(weaponID[1] * 100));
+                player.setWeapon(new Weapon(weaponSprites2[0], 3, weaponID[1] * 100, 20, bulletFrames2));
                 JOptionPane.showMessageDialog(this, "Weapon purchased!");
             } else {
                 JOptionPane.showMessageDialog(this, "Not enough gold!");
             }
         });
-        
+
         add(weaponButton2);
         yPosition += 60;
-        
+
         JButton weaponButton3 = new JButton("Weapon - Cost: " + (weaponID[2] * 100) + " Gold");
-        weaponButton3.setBounds(50, yPosition, 300, 50);
+        weaponButton3.setBounds(90, yPosition, 300, 50);
+        weaponButton3.setToolTipText("Purchase Weapon 3 for " + (weaponID[2] * 100) + " Gold");
 
         weaponButton3.addActionListener(e -> {
             Player player = manager.getPlayer();
@@ -79,18 +81,19 @@ public class ShopPanel extends JPanel {
                 JOptionPane.showMessageDialog(this, "Not enough gold!");
             }
         });
-        
+
         add(weaponButton3);
         yPosition += 30;
 
-        // Go back to lobby
+     // Go back to lobby 버튼 크기 변경
         JButton lobbyButton = new JButton("Go to Lobby");
-        lobbyButton.setBounds(150, 400, 100, 50);
+        lobbyButton.setBounds(140, 400, 200, 60);  // 크기와 위치 변경
         lobbyButton.addActionListener(e -> manager.switchPanel(new LobbyPanel(manager)));
         add(lobbyButton);
+
     }
 
- // 유틸리티 메서드: 스프라이트 시트를 로드합니다.
+    // 유틸리티 메서드: 스프라이트 시트를 로드합니다.
     private BufferedImage[] loadSpriteSheet(String resourcePath, int frameWidth, int frameHeight) throws IOException {
         return new SpriteSheet(resourcePath, frameWidth, frameHeight).getAllFrames();
     }
@@ -100,7 +103,7 @@ public class ShopPanel extends JPanel {
         super.paintComponent(g);
         g.setColor(Color.LIGHT_GRAY);
         g.fillRect(0, 0, getWidth(), getHeight());
-        
+
         if (shopbackgroundImageIcon != null) {
             Image backgroundImage = shopbackgroundImageIcon.getImage(); // ImageIcon에서 Image 객체 추출
             g.drawImage(backgroundImage, 0, 0, getWidth(), getHeight(), this); // 배경 이미지를 패널 크기에 맞게 그리기

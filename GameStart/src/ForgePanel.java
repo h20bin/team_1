@@ -20,15 +20,16 @@ public class ForgePanel extends JPanel {
         loadUpgradeCosts();
 
         JLabel title = new JLabel("Forge", SwingConstants.CENTER);
-        title.setFont(new Font("Arial", Font.BOLD, 24));
-        title.setBounds(50, 20, 300, 50);
+        title.setFont(new Font("Arial", Font.BOLD, 40));
+        title.setBounds(95, 30, 300, 50);
         add(title);
 
         int yPosition = 100;
 
         // MaxHP 업그레이드 버튼
         JButton hpButton = new JButton("Upgrade MaxHP - " + hpUpgradeCost + " Gold");
-        hpButton.setBounds(50, yPosition, 300, 50);
+        hpButton.setBounds(90, yPosition, 300, 50);
+        hpButton.setToolTipText("Increase your maximum HP by 10.");
         hpButton.addActionListener(e -> attemptUpgrade("MaxHP", hpUpgradeCost, () -> {
             Player player = manager.getPlayer();
             player.increaseMaxHP(10);
@@ -43,7 +44,8 @@ public class ForgePanel extends JPanel {
 
         // MaxSpeed 업그레이드 버튼
         JButton speedButton = new JButton("Upgrade MaxSpeed - " + speedUpgradeCost + " Gold");
-        speedButton.setBounds(50, yPosition, 300, 50);
+        speedButton.setBounds(90, yPosition, 300, 50);
+        speedButton.setToolTipText("Increase your maximum speed by 0.1.");
         speedButton.addActionListener(e -> attemptUpgrade("MaxSpeed", speedUpgradeCost, () -> {
             Player player = manager.getPlayer();
             player.increaseMaxSpeed(0.1);
@@ -58,7 +60,8 @@ public class ForgePanel extends JPanel {
 
         // Attack Cycle 업그레이드 버튼
         JButton attackCycleButton = new JButton("Upgrade Attack Cycle - " + attackCycleUpgradeCost + " Gold");
-        attackCycleButton.setBounds(50, yPosition, 300, 50);
+        attackCycleButton.setBounds(90, yPosition, 300, 50);
+        attackCycleButton.setToolTipText("Reduce your attack cycle by 0.1 seconds.");
         attackCycleButton.addActionListener(e -> attemptUpgrade("Attack Cycle", attackCycleUpgradeCost, () -> {
             Player player = manager.getPlayer();
             player.reduceAttackCycle(0.1);
@@ -72,7 +75,8 @@ public class ForgePanel extends JPanel {
 
         // Lobby로 돌아가기 버튼
         JButton lobbyButton = new JButton("Go to Lobby");
-        lobbyButton.setBounds(150, 400, 100, 50);
+        lobbyButton.setBounds(140, 400, 200, 60);
+        lobbyButton.setToolTipText("Return to the main lobby.");
         lobbyButton.addActionListener(e -> manager.switchPanel(new LobbyPanel(manager)));
         add(lobbyButton);
     }
@@ -90,6 +94,7 @@ public class ForgePanel extends JPanel {
             JOptionPane.showMessageDialog(this, "Not enough gold!");
         }
     }
+    
     // 업그레이드 비용을 파일에 저장하는 메서드
     private void saveUpgradeCosts() {
         try (ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream("upgradeCosts.dat"))) {

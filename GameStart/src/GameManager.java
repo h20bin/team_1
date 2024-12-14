@@ -4,6 +4,7 @@ public class GameManager {
     private JFrame frame;
     private JPanel currentPanel;
     private Player player;
+    private boolean inLobby;  // 로비 상태를 관리하는 변수
 
     public GameManager() {
         // 싱글톤 Player 인스턴스 가져오기
@@ -17,6 +18,7 @@ public class GameManager {
         frame.setSize(512, 768);
         frame.setResizable(false);
 
+        // 기본적으로 TitlePanel을 로드
         switchPanel(new TitlePanel(this));
         frame.setVisible(true);
     }
@@ -29,10 +31,21 @@ public class GameManager {
         frame.add(currentPanel);
         frame.revalidate();
         frame.repaint();
+
+        // 패널이 로비로 변경되면 inLobby을 true로 설정
+        if (newPanel instanceof LobbyPanel) {
+            inLobby = true;
+        } else {
+            inLobby = false;
+        }
     }
 
     public Player getPlayer() {
         return player;
+    }
+
+    public boolean isInLobby() {
+        return inLobby;  // 로비에 있을 때 true 반환
     }
 
     public static void main(String[] args) {

@@ -21,13 +21,12 @@ public class LobbyPanel extends JPanel {
         JButton shopButton = new JButton("Shop");
         shopButton.setBounds(100, 250, 100, 50);
         shopButton.addActionListener(e -> {
-			try {
-				manager.switchPanel(new ShopPanel(manager));
-			} catch (IOException e1) {
-				// TODO Auto-generated catch block
-				e1.printStackTrace();
-			}
-		});
+            try {
+                manager.switchPanel(new ShopPanel(manager));
+            } catch (IOException e1) {
+                e1.printStackTrace();
+            }
+        });
         add(shopButton);
 
         JButton stageButton = new JButton("Stage");
@@ -43,26 +42,27 @@ public class LobbyPanel extends JPanel {
 
     @Override
     protected void paintComponent(Graphics g) {
-        super.paintComponent(g);
+        super.paintComponent(g);  // 기존 내용을 클리어하여 화면을 초기화
+        
+        // 배경 색을 회색으로 채움
         g.setColor(Color.LIGHT_GRAY);
         g.fillRect(0, 0, getWidth(), getHeight());
-        
+
+        // 배경 이미지가 존재할 경우 그리기
         if (lobbybackgroundImageIcon != null) {
             Image backgroundImage = lobbybackgroundImageIcon.getImage(); // ImageIcon에서 Image 객체 추출
             g.drawImage(backgroundImage, 0, 0, getWidth(), getHeight(), this); // 배경 이미지를 패널 크기에 맞게 그리기
-        } else {
-            // 이미지가 로드되지 않았을 경우 검정색 배경
-            g.setColor(Color.BLACK);
-            g.fillRect(0, 0, getWidth(), getHeight());
         }
 
-        // HUD 표시
+        // HUD 정보 표시
         Player player = manager.getPlayer();
         g.setColor(Color.BLACK);
         g.drawString("HP: " + player.getCurrentHP() + "/" + player.getMaxHP(), 20, 20);
         g.drawString("Gold: " + player.getGold(), 20, 40);
 
-        // 플레이어 스프라이트 그리기
-        player.render(g);
+        // 로비에서는 플레이어 스프라이트를 그리지 않음
+        if (!manager.isInLobby()) {
+            player.render(g);
+        }
     }
 }

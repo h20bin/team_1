@@ -15,7 +15,7 @@ public class Player extends Character {
 
     private boolean invincible;  // 무적 상태
     private long invincibleStartTime;  // 무적 시작 시간
-    private static final long INVINCIBLE_TIME = 2000;  // 무적 시간 (2초)
+    private static final long INVINCIBLE_TIME = 1000;  // 무적 시간 (1초)
 
     Player() {
         super(0, 0, null, null); // 기본값 설정
@@ -50,8 +50,8 @@ public class Player extends Character {
 
     public void reset() {
         // 초기화 로직
-        this.x = 100;
-        this.y = 100;
+        this.x = 200;
+        this.y = 600;
         this.maxHP = 100;
         this.currentHP = maxHP;
         this.invincible = false;  // 초기에는 무적 상태 아님
@@ -239,4 +239,29 @@ public class Player extends Character {
     public void play() {
         // 플레이어가 진행할 다른 기능들을 여기에 구현
     }
+
+	public int getWidth() {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	public void setCurrentHP(int currentHP) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	public void setMaxHP(int maxHP) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	public int getHeight() {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	public void setPosition(int i, int j) {
+		// TODO Auto-generated method stub
+		
+	}
 }

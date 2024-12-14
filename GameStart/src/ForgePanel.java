@@ -6,10 +6,13 @@ public class ForgePanel extends JPanel {
     private int hpUpgradeCost = 100;
     private int speedUpgradeCost = 150;
     private int attackCycleUpgradeCost = 200;
+    private ImageIcon forgebackgroundImageIcon;
 
     public ForgePanel(GameManager manager) {
         this.manager = manager;
         setLayout(null);
+        
+        forgebackgroundImageIcon = new ImageIcon(getClass().getResource("/background/forgeback.jpeg"));
 
         JLabel title = new JLabel("Forge", SwingConstants.CENTER);
         title.setFont(new Font("Arial", Font.BOLD, 24));
@@ -85,5 +88,14 @@ public class ForgePanel extends JPanel {
         super.paintComponent(g);
         g.setColor(Color.DARK_GRAY);
         g.fillRect(0, 0, getWidth(), getHeight());
+        
+        if (forgebackgroundImageIcon != null) {
+            Image backgroundImage = forgebackgroundImageIcon.getImage(); // ImageIcon에서 Image 객체 추출
+            g.drawImage(backgroundImage, 0, 0, getWidth(), getHeight(), this); // 배경 이미지를 패널 크기에 맞게 그리기
+        } else {
+            // 이미지가 로드되지 않았을 경우 검정색 배경
+            g.setColor(Color.BLACK);
+            g.fillRect(0, 0, getWidth(), getHeight());
+        }
     }
 }

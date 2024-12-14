@@ -7,14 +7,17 @@ public class ShopPanel extends JPanel {
     private GameManager manager;
     private int[] weaponID = {1,2,3,4,5};
     private int yPosition = 100;
+    private ImageIcon shopbackgroundImageIcon;
 
     public ShopPanel(GameManager manager) throws IOException {
         this.manager = manager;
         setLayout(null);
+        shopbackgroundImageIcon = new ImageIcon(getClass().getResource("/background/shopback.jpeg"));
 
         JLabel title = new JLabel("Shop", SwingConstants.CENTER);
         title.setFont(new Font("Arial", Font.BOLD, 24));
         title.setBounds(50, 20, 300, 50);
+        title.setForeground(Color.WHITE);
         add(title);
 
         // 무기 스프라이트와 총알 프레임 준비
@@ -97,5 +100,14 @@ public class ShopPanel extends JPanel {
         super.paintComponent(g);
         g.setColor(Color.LIGHT_GRAY);
         g.fillRect(0, 0, getWidth(), getHeight());
+        
+        if (shopbackgroundImageIcon != null) {
+            Image backgroundImage = shopbackgroundImageIcon.getImage(); // ImageIcon에서 Image 객체 추출
+            g.drawImage(backgroundImage, 0, 0, getWidth(), getHeight(), this); // 배경 이미지를 패널 크기에 맞게 그리기
+        } else {
+            // 이미지가 로드되지 않았을 경우 검정색 배경
+            g.setColor(Color.BLACK);
+            g.fillRect(0, 0, getWidth(), getHeight());
+        }
     }
 }

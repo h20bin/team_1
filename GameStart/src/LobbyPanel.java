@@ -52,7 +52,7 @@ public class LobbyPanel extends JPanel {
 
         // TitlePanel로 가는 버튼 추가
         JButton titleButton = new JButton("Go to Main");
-        titleButton.setBounds(170, 350, 150, 50);  // 버튼 위치를 적절하게 설정
+        titleButton.setBounds(170, 450, 150, 50);  // 버튼 위치를 적절하게 설정
         titleButton.addActionListener(e -> manager.switchPanel(new TitlePanel(manager)));
         titleButton.setToolTipText("Return to the main menu"); // 설명 추가
         add(titleButton);

@@ -2,12 +2,15 @@ import javax.sound.sampled.AudioInputStream;
 import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.Clip;
 import javax.swing.*;
+
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.image.BufferedImage;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
 
 public class TitlePanel extends JPanel {
 
@@ -19,11 +22,82 @@ public class TitlePanel extends JPanel {
     private JButton resetButton; // 리셋 버튼
     private JButton gameInfoButton; // 게임 정보 버튼
     private JButton exitButton; // 종료 버튼
+    private BufferedImage[] titlePanel;
+    private BufferedImage[] title1;
+    private BufferedImage[] title2;
+    private BufferedImage[] title3;
+    
+    private int animationIndex = 0; // 현재 애니메이션 단계
+    private int animationStep = 0; // 현재 애니메이션의 순서
+    private Timer animationTimer; // 애니메이션 타이머
+    
+    private ArrayList<ImageData> imagelist;
+    private int animationState = 0; // 현재 애니메이션 상태
+    private int animationSubIndex = 0; // 현재 상태 내에서의 프레임 인덱스
+    
+    private int[][] animationFrame = {
+    							  {0,1,2,3},
+    							  {0,1,4,8,12,22,32,42,52,62},
+    							  {0,1,5,9,13,23,33,43,53,63,12,22,32,42,52,62},
+    							  {0,1,6,10,14,24,34,44,54,64,13,23,33,43,53,63,12,22,32,42,52,62},
+    							  {0,1,7,11,15,25,35,45,55,65,14,24,34,44,54,64,13,23,33,43,53,63,12,22,32,42,52,62},
+    							  {0,1,7,11,16,26,36,46,56,66,15,25,35,45,55,65,14,24,34,44,54,64,13,23,33,43,53,63,12,22,32,42,52,62},
+    							  {0,1,7,11,17,27,37,47,57,67,16,26,36,46,56,66,15,25,35,45,55,65,14,24,34,44,54,64,13,23,33,43,53,63,12,22,32,42,52,62},
+    							  {0,1,7,11,18,28,38,48,58,68,17,27,37,47,57,67,16,26,36,46,56,66,15,25,35,45,55,65,14,24,34,44,54,64,13,23,33,43,53,63,12,22,32,42,52,62},
+    							  {0,1,7,11,19,29,39,49,59,69,28,38,48,58,68,17,27,37,47,57,67,16,26,36,46,56,66,15,25,35,45,55,65,14,24,34,44,54,64,13,23,33,43,53,63,12,22,32,42,52,62},
+    							  {0,1,7,11,20,30,40,50,60,70,19,29,39,49,59,69,28,38,48,58,68,17,27,37,47,57,67,16,26,36,46,56,66,15,25,35,45,55,65,14,24,34,44,54,64,13,23,33,43,53,63,12,22,32,42,52,62},
+    							  {0,1,7,11,21,31,41,51,61,71,20,30,40,50,60,70,19,29,39,49,59,69,28,38,48,58,68,17,27,37,47,57,67,16,26,36,46,56,66,15,25,35,45,55,65,14,24,34,44,54,64,13,23,33,43,53,63,12,22,32,42,52,62},
+    							  {0,1,7,11,72,21,31,41,51,61,71,20,30,40,50,60,70,19,29,39,49,59,69,28,38,48,58,68,17,27,37,47,57,67,16,26,36,46,56,66,15,25,35,45,55,65,14,24,34,44,54,64,13,23,33,43,53,63,12,22,32,42,52,62},
+    							  {0,1,7,11,73,72,21,31,41,51,61,71,20,30,40,50,60,70,19,29,39,49,59,69,28,38,48,58,68,17,27,37,47,57,67,16,26,36,46,56,66,15,25,35,45,55,65,14,24,34,44,54,64,13,23,33,43,53,63,12,22,32,42,52,62},
+    							  {0,1,7,11,74,73,72,21,31,41,51,61,71,20,30,40,50,60,70,19,29,39,49,59,69,28,38,48,58,68,17,27,37,47,57,67,16,26,36,46,56,66,15,25,35,45,55,65,14,24,34,44,54,64,13,23,33,43,53,63,12,22,32,42,52,62},
+    							  {0,1,7,11,75,74,73,72,21,31,41,51,61,71,20,30,40,50,60,70,19,29,39,49,59,69,28,38,48,58,68,17,27,37,47,57,67,16,26,36,46,56,66,15,25,35,45,55,65,14,24,34,44,54,64,13,23,33,43,53,63,12,22,32,42,52,62},
+    							  {0,1,7,11,76,75,74,73,72,21,31,41,51,61,71,20,30,40,50,60,70,19,29,39,49,59,69,28,38,48,58,68,17,27,37,47,57,67,16,26,36,46,56,66,15,25,35,45,55,65,14,24,34,44,54,64,13,23,33,43,53,63,12,22,32,42,52,62},
+    							  {0,1,7,11}		  
+    							  };
+    
+    private int title1_x;
+    private int title1_y;
+    
+    private int title2_x;
+    private int title2_y;
+    
+    private int title3_x;
+    private int title3_y;
+    
+    private int panel1_x;
+    private int panel1_y;
+    private int panel2_x;
+    private int panel2_y;
 
     // TitlePanel 생성자
     public TitlePanel(GameManager manager) {
         this.manager = manager;
-        
+        try {
+        	this.titlePanel = loadSpriteSheet("/UI/Panel-Sheet.png", 208, 82);
+        	this.title1 = loadSpriteSheet("/UI/bang2-Sheet.png", 192, 64);
+        	this.title2 = loadSpriteSheet("/UI/bang3-Sheet.png", 192, 64);
+			this.title3 = loadSpriteSheet("/UI/title-Sheet1.png", 256, 1);
+			
+			this.title1_x = 27;
+			this.title1_y = 27;
+		    
+		    this.title2_x = 27;
+		    this.title2_y = 129;
+		    
+		    this.title3_x = 20;
+		    this.title3_y = 220;
+		    
+		    this.panel1_x = 18;
+		    this.panel1_y = 18;
+		    this.panel2_x = 18;
+		    this.panel2_y = 120;
+		    startAnimation();
+		    initializeImageList();
+			
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
         // 레이아웃 설정
         setLayout(null);
 
@@ -37,10 +111,126 @@ public class TitlePanel extends JPanel {
         startBackgroundMusic();
     }
 
+    private void initializeImageList() {
+        imagelist = new ArrayList<>();
+
+        imagelist.add(new ImageData(this.titlePanel[0], this.panel1_x, this.panel1_y));
+        imagelist.add(new ImageData(this.titlePanel[0], this.panel2_x, this.panel2_y));
+
+        imagelist.add(new ImageData(this.title1[0], this.title1_x, this.title1_y));
+        imagelist.add(new ImageData(this.title2[0], this.title2_x, this.title2_y));
+
+        imagelist.add(new ImageData(this.title1[1], this.title1_x, this.title1_y));
+        imagelist.add(new ImageData(this.title1[2], this.title1_x, this.title1_y));
+        imagelist.add(new ImageData(this.title1[3], this.title1_x, this.title1_y));
+        imagelist.add(new ImageData(this.title1[4], this.title1_x, this.title1_y));
+
+        imagelist.add(new ImageData(this.title2[1], this.title2_x, this.title2_y));
+        imagelist.add(new ImageData(this.title2[2], this.title2_x, this.title2_y));
+        imagelist.add(new ImageData(this.title2[3], this.title2_x, this.title2_y));
+        imagelist.add(new ImageData(this.title2[4], this.title2_x, this.title2_y));
+
+        imagelist.add(new ImageData(this.title3[0], this.title3_x, this.title3_y));
+        imagelist.add(new ImageData(this.title3[1], this.title3_x, this.title3_y + 1));
+        imagelist.add(new ImageData(this.title3[2], this.title3_x, this.title3_y + 2));
+        imagelist.add(new ImageData(this.title3[3], this.title3_x, this.title3_y + 3));
+        imagelist.add(new ImageData(this.title3[4], this.title3_x, this.title3_y + 4));
+        imagelist.add(new ImageData(this.title3[5], this.title3_x, this.title3_y + 5));
+        imagelist.add(new ImageData(this.title3[6], this.title3_x, this.title3_y + 6));
+        imagelist.add(new ImageData(this.title3[7], this.title3_x, this.title3_y + 7));
+        imagelist.add(new ImageData(this.title3[8], this.title3_x, this.title3_y + 8));
+        imagelist.add(new ImageData(this.title3[9], this.title3_x, this.title3_y + 9));
+
+        imagelist.add(new ImageData(this.title3[10], this.title3_x, this.title3_y + 10));
+        imagelist.add(new ImageData(this.title3[11], this.title3_x, this.title3_y + 11));
+        imagelist.add(new ImageData(this.title3[12], this.title3_x, this.title3_y + 12));
+        imagelist.add(new ImageData(this.title3[13], this.title3_x, this.title3_y + 13));
+        imagelist.add(new ImageData(this.title3[14], this.title3_x, this.title3_y + 14));
+        imagelist.add(new ImageData(this.title3[15], this.title3_x, this.title3_y + 15));
+        imagelist.add(new ImageData(this.title3[16], this.title3_x, this.title3_y + 16));
+        imagelist.add(new ImageData(this.title3[17], this.title3_x, this.title3_y + 17));
+        imagelist.add(new ImageData(this.title3[18], this.title3_x, this.title3_y + 18));
+        imagelist.add(new ImageData(this.title3[19], this.title3_x, this.title3_y + 19));
+        
+        imagelist.add(new ImageData(this.title3[20], this.title3_x, this.title3_y + 20));
+        imagelist.add(new ImageData(this.title3[21], this.title3_x, this.title3_y + 21));
+        imagelist.add(new ImageData(this.title3[22], this.title3_x, this.title3_y + 22));
+        imagelist.add(new ImageData(this.title3[23], this.title3_x, this.title3_y + 23));
+        imagelist.add(new ImageData(this.title3[24], this.title3_x, this.title3_y + 24));
+        imagelist.add(new ImageData(this.title3[25], this.title3_x, this.title3_y + 25));
+        imagelist.add(new ImageData(this.title3[26], this.title3_x, this.title3_y + 26));
+        imagelist.add(new ImageData(this.title3[27], this.title3_x, this.title3_y + 27));
+        imagelist.add(new ImageData(this.title3[28], this.title3_x, this.title3_y + 28));
+        imagelist.add(new ImageData(this.title3[29], this.title3_x, this.title3_y + 29));
+
+        imagelist.add(new ImageData(this.title3[30], this.title3_x, this.title3_y + 30));
+        imagelist.add(new ImageData(this.title3[31], this.title3_x, this.title3_y + 31));
+        imagelist.add(new ImageData(this.title3[32], this.title3_x, this.title3_y + 32));
+        imagelist.add(new ImageData(this.title3[33], this.title3_x, this.title3_y + 33));
+        imagelist.add(new ImageData(this.title3[34], this.title3_x, this.title3_y + 34));
+        imagelist.add(new ImageData(this.title3[35], this.title3_x, this.title3_y + 35));
+        imagelist.add(new ImageData(this.title3[36], this.title3_x, this.title3_y + 36));
+        imagelist.add(new ImageData(this.title3[37], this.title3_x, this.title3_y + 37));
+        imagelist.add(new ImageData(this.title3[38], this.title3_x, this.title3_y + 38));
+        imagelist.add(new ImageData(this.title3[39], this.title3_x, this.title3_y + 39));
+
+        imagelist.add(new ImageData(this.title3[40], this.title3_x, this.title3_y + 40));
+        imagelist.add(new ImageData(this.title3[41], this.title3_x, this.title3_y + 41));
+        imagelist.add(new ImageData(this.title3[42], this.title3_x, this.title3_y + 42));
+        imagelist.add(new ImageData(this.title3[43], this.title3_x, this.title3_y + 43));
+        imagelist.add(new ImageData(this.title3[44], this.title3_x, this.title3_y + 44));
+        imagelist.add(new ImageData(this.title3[45], this.title3_x, this.title3_y + 45));
+        imagelist.add(new ImageData(this.title3[46], this.title3_x, this.title3_y + 46));
+        imagelist.add(new ImageData(this.title3[47], this.title3_x, this.title3_y + 47));
+        imagelist.add(new ImageData(this.title3[48], this.title3_x, this.title3_y + 48));
+        imagelist.add(new ImageData(this.title3[49], this.title3_x, this.title3_y + 49));
+
+        imagelist.add(new ImageData(this.title3[50], this.title3_x, this.title3_y + 50));
+        imagelist.add(new ImageData(this.title3[51], this.title3_x, this.title3_y + 51));
+        imagelist.add(new ImageData(this.title3[52], this.title3_x, this.title3_y + 52));
+        imagelist.add(new ImageData(this.title3[53], this.title3_x, this.title3_y + 53));
+        imagelist.add(new ImageData(this.title3[54], this.title3_x, this.title3_y + 54));
+        imagelist.add(new ImageData(this.title3[55], this.title3_x, this.title3_y + 55));
+        imagelist.add(new ImageData(this.title3[56], this.title3_x, this.title3_y + 56));
+        imagelist.add(new ImageData(this.title3[57], this.title3_x, this.title3_y + 57));
+        imagelist.add(new ImageData(this.title3[58], this.title3_x, this.title3_y + 58));
+        imagelist.add(new ImageData(this.title3[59], this.title3_x, this.title3_y + 59));
+
+        imagelist.add(new ImageData(this.title3[60], this.title3_x, this.title3_y + 60));
+        imagelist.add(new ImageData(this.title3[61], this.title3_x, this.title3_y + 61));
+        imagelist.add(new ImageData(this.title3[62], this.title3_x, this.title3_y + 62));
+        imagelist.add(new ImageData(this.title3[63], this.title3_x, this.title3_y + 63));
+        imagelist.add(new ImageData(this.title3[64], this.title3_x, this.title3_y + 64));
+    }
+
+    private void startAnimation() {
+        animationStep = 0;
+        animationState = 0;
+
+        animationTimer = new Timer(1, e -> {
+            animationStep++;
+
+            // 다음 상태로 이동
+            if (animationStep >= animationFrame[animationState].length) {
+                animationStep = 0;
+                animationState++;
+                if (animationState >= animationFrame.length) {
+                    animationState = 0; // 상태를 루프 처리
+                }
+            }
+
+            repaint(); // 화면 갱신
+        });
+
+        Timer delayTimer = new Timer(2000, startEvent -> animationTimer.start());
+        delayTimer.setRepeats(false);
+        delayTimer.start();
+    }
+    
     // 버튼 생성 및 설정 메서드
     private void createButtons() {
         startButton = new JButton("Start");
-        startButton.setBounds(180, 150, 100, 50);
+        startButton.setBounds(380, 400, 80, 40);
         
         // 시작 버튼 클릭 시 이벤트 처리
         startButton.addActionListener(e -> {
@@ -52,7 +242,7 @@ public class TitlePanel extends JPanel {
         add(startButton);
 
         resetButton = new JButton("Reset");
-        resetButton.setBounds(180, 220, 100, 50);
+        resetButton.setBounds(380, 500, 80, 40);
         
         // 리셋 버튼 클릭 시 이벤트 처리
         resetButton.addActionListener(e -> {
@@ -64,14 +254,14 @@ public class TitlePanel extends JPanel {
         add(resetButton);
 
         gameInfoButton = new JButton("Game Info");
-        gameInfoButton.setBounds(180, 290, 100, 50);
+        gameInfoButton.setBounds(40, 600, 80, 40);
         
         // 게임 정보 버튼 클릭 시 이벤트 처리
         gameInfoButton.addActionListener(e -> showGameInfo()); // 게임 설명 표시
         add(gameInfoButton);
         
         exitButton = new JButton("Exit");
-        exitButton.setBounds(180, 360, 100, 50);
+        exitButton.setBounds(380, 600, 80, 40);
         
         // 종료 버튼 클릭 시 이벤트 처리
         exitButton.addActionListener(e -> {
@@ -83,39 +273,33 @@ public class TitlePanel extends JPanel {
         add(exitButton);
     }
 
-    // 패널을 그리는 메서드 (배경 이미지 및 제목 텍스트)
     @Override
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
-        
+
         // 배경 이미지가 있을 경우 그리기
         if (mainbackgroundImageIcon != null) {
-            Image backgroundImage = mainbackgroundImageIcon.getImage(); // ImageIcon에서 Image 객체 추출
-            g.drawImage(backgroundImage, 0, 0, getWidth(), getHeight(), this); // 배경 이미지를 패널 크기에 맞게 그리기
+            Image backgroundImage = mainbackgroundImageIcon.getImage();
+            g.drawImage(backgroundImage, 0, 0, getWidth(), getHeight(), this);
         } else {
-            // 이미지가 로드되지 않았을 경우 검정색 배경으로 설정
             g.setColor(Color.BLACK);
-            g.fillRect(0, 0, getWidth(), getHeight()); // 검정색 배경 채우기
+            g.fillRect(0, 0, getWidth(), getHeight());
         }
-        
-        // 제목 텍스트 설정
-        String titleText = "빵빵 비행단";
-        Font titleFont = new Font("\uB9C8\uB984 \uACE0\uB515", Font.BOLD, 36); // 제목 폰트 설정
-        g.setFont(titleFont);
-        g.setColor(Color.WHITE); // 텍스트 색상 설정
-        
-        // 텍스트 크기 계산
-        FontMetrics fm = g.getFontMetrics();
-        int textWidth = fm.stringWidth(titleText);
-        int textHeight = fm.getHeight();
-        
-        // 텍스트 위치 계산 (중앙 정렬)
-        int x = (getWidth() - textWidth) / 2;
-        int y = 80;
 
-        // 제목 텍스트 그리기
-        g.drawString(titleText, x, y); // 텍스트 그리기
+        // 현재 animationState에 해당하는 모든 프레임 그리기
+        if (animationState < animationFrame.length) {
+            int[] currentFrames = animationFrame[animationState];
+            for (int frame : currentFrames) {
+                if (frame < imagelist.size()) {
+                    ImageData imageData = imagelist.get(frame);
+                    g.drawImage(imageData.image, imageData.x, imageData.y, this);
+                }
+            }
+        }
     }
+    
+    
+    
     
     // 배경 음악 시작 메서드
     private void startBackgroundMusic() {
@@ -142,6 +326,11 @@ public class TitlePanel extends JPanel {
         if (musicClip != null && musicClip.isRunning()) {
             musicClip.stop(); // 음악 정지
         }
+    }
+    
+	// 유틸리티 메서드: 스프라이트 시트를 로드합니다.
+    private BufferedImage[] loadSpriteSheet(String resourcePath, int frameWidth, int frameHeight) throws IOException {
+        return new SpriteSheet(resourcePath, frameWidth, frameHeight).getAllFrames();
     }
     
     // 게임 설명을 보여주는 메서드

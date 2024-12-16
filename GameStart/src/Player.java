@@ -27,7 +27,7 @@ public class Player extends Character {
             BufferedImage[] weaponSprites = loadSpriteSheet("/Weapon/weapon-Sheet"+weaponNum+".png", 72, 72);
             BufferedImage[] bulletFrames = loadSpriteSheet("/Weapon/bullet-Sheet"+weaponNum+".png", 6, 4);
 
-            Weapon defaultWeapon = new Weapon(weaponSprites[0], 3, 100, 8, bulletFrames);
+            Weapon defaultWeapon = new Weapon(weaponSprites[3], 3, 100, 8, bulletFrames, 1);
 
             // 초기 상태 설정
             this.sprite = playerSprites[0];

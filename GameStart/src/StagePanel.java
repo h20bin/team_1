@@ -42,7 +42,7 @@ public class StagePanel extends JPanel {
             if (i == 1) { 
                 stageButtons[i - 1].setEnabled(true);  // 첫 번째 스테이지는 활성화
             } else { 
-                stageButtons[i - 1].setEnabled(false);  // 나머지 스테이지는 비활성화
+                stageButtons[i - 1].setEnabled(true);  // 나머지 스테이지는 비활성화
             }
 
             // 생성한 버튼을 패널에 추가
@@ -100,7 +100,7 @@ public class StagePanel extends JPanel {
 
     // 버튼을 비활성화 하는 메서드
     private void disableButton(JButton button) { 
-        button.setEnabled(false); 
+        button.setEnabled(true); 
     }
 
     // 버튼을 활성화하는 메서드

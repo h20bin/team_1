@@ -10,17 +10,36 @@ public class Bullet {
     private int currentFrame = 0;
     private int frameCount = 0;
     private int animationSpeed = 4; // 애니메이션 속도 조정
+    private Weapon weapon;
 
     // 상태 관리
-    private enum BulletState { NORMAL, IMPACT }
+    private enum BulletState { NORMAL, IMPACT, EXIT };
+    private enum BulletType { wea1, wea2, wea3};
     private BulletState state = BulletState.NORMAL;
-
+    private BulletType type = BulletType.wea1;
     public Bullet(int x, int y, int speed, int damage, BufferedImage[] frames) {
         this.x = x;
         this.y = y;
         this.speed = speed;
         this.damage = damage;
         this.frames = frames;
+        this.weapon = Player.getInstance().weapon;
+        setBulletType();
+    }
+    
+    public void setBulletType() {
+    	if (this.weapon.weaponID == 1) {
+    		type = BulletType.wea1;
+    		this.animationSpeed = 3;
+    	}
+    	else if(this.weapon.weaponID == 2){
+    		type = BulletType.wea2;
+    		this.animationSpeed = 1;
+    	}
+    	else if(this.weapon.weaponID == 3){
+    		type = BulletType.wea3;
+    		this.animationSpeed = 2;
+    	}
     }
 
     public void move() {
@@ -30,26 +49,72 @@ public class Bullet {
     }
 
     public void render(Graphics g) {
-        if (state == BulletState.NORMAL) {
-            // NORMAL 상태의 애니메이션 처리
-            if (frameCount / animationSpeed < 3) {
-                // 초기 프레임 (1~3번 프레임 재생)
-                currentFrame = (frameCount / animationSpeed) % 3;
-            } else {
-                // 이후에는 4번 프레임 고정
-                currentFrame = 3;
-            }
-        } else if (state == BulletState.IMPACT) {
-            // IMPACT 상태의 애니메이션 처리 (5~13번 프레임 재생)
-            currentFrame = 4 + (frameCount / animationSpeed);
-            if (currentFrame >= frames.length) {
-                // 마지막 프레임까지 재생되면 소멸 처리
-                currentFrame = frames.length - 1;
-            }
-        }
+    	if (type == BulletType.wea1) {
+	        if (state == BulletState.NORMAL) {
+	            // NORMAL 상태의 애니메이션 처리
+	            if (frameCount / animationSpeed < 3) {
+	                currentFrame = (frameCount / animationSpeed) % 3;
+	            } else {
+	                currentFrame = 3;
+	            }
+	        } else if (state == BulletState.IMPACT) {
+	            // IMPACT 상태의 애니메이션 처리 (5~13번 프레임 재생)
+	            currentFrame = 4 + (frameCount / 1);
+	            if (currentFrame >= frames.length - 1) {
+	                // 마지막 프레임까지 재생되면 EXIT 상태로 전환
+	                state = BulletState.EXIT;
+	            }
+	        }
 
-        // 프레임 그리기
-        g.drawImage(frames[currentFrame], x, y, null);
+	        // EXIT 상태에서는 아무것도 그리지 않음
+	        if (state != BulletState.EXIT) {
+	            g.drawImage(frames[currentFrame], x, y, null);
+	        }
+	        
+    	}
+    	else if(type == BulletType.wea2) {
+	        if (state == BulletState.NORMAL) {
+	            // NORMAL 상태의 애니메이션 처리
+	            if (frameCount / animationSpeed < 5) {
+	                currentFrame = (frameCount / 1) % 8;
+	            } else {
+	                currentFrame = 8;
+	            }
+	        } else if (state == BulletState.IMPACT) {
+	            // IMPACT 상태의 애니메이션 처리 (5~13번 프레임 재생)
+	            currentFrame = 4 + (frameCount / 1);
+	            if (currentFrame >= frames.length - 1) {
+	                // 마지막 프레임까지 재생되면 EXIT 상태로 전환
+	                state = BulletState.EXIT;
+	            }
+	        }
+    	
+	        // EXIT 상태에서는 아무것도 그리지 않음
+	        if (state != BulletState.EXIT) {
+	            g.drawImage(frames[currentFrame], x, y, null);
+	        }
+    	}
+    	else if(type == BulletType.wea3) {
+	        if (state == BulletState.NORMAL) {
+	            // NORMAL 상태의 애니메이션 처리
+	            if (frameCount / animationSpeed < 4) {
+	                currentFrame = (frameCount / animationSpeed) % 12;
+	            } else {
+	                currentFrame = 12;
+	            }
+	        } else if (state == BulletState.IMPACT) {
+	            // IMPACT 상태의 애니메이션 처리 (5~13번 프레임 재생)m
+	            if (currentFrame >= frames.length - 1) {
+	                // 마지막 프레임까지 재생되면 EXIT 상태로 전환
+	                state = BulletState.EXIT;
+	            }
+	        }
+	
+	        // EXIT 상태에서는 아무것도 그리지 않음
+	        if (state != BulletState.EXIT) {
+	            g.drawImage(frames[currentFrame], x, y, null);
+	        }
+    	}
         frameCount++;
     }
 
@@ -62,9 +127,9 @@ public class Bullet {
     }
 
     public boolean isFinished() {
-        // IMPACT 상태에서 마지막 프레임까지 재생되면 true 반환
-        return state == BulletState.IMPACT && currentFrame >= frames.length - 1;
+        return state == BulletState.EXIT;
     }
+
 
     public int getDamage() {
         return damage;
@@ -75,7 +140,9 @@ public class Bullet {
     }
 
     public Rectangle getBounds() {
-        // 적의 영역을 40x40으로 설정
-        return new Rectangle(x, y, 6, 4);
+        if (state == BulletState.EXIT) {
+            return new Rectangle(0, 0, 0, 0); // 충돌 영역 무효화
+        }
+        return new Rectangle(x, y, 6, 4); // 기존 충돌 영역
     }
 }

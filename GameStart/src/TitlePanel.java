@@ -10,9 +10,11 @@ import java.awt.image.BufferedImage;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.List;
 import java.util.ArrayList;
+import java.util.Collections;
 
-public class TitlePanel extends JPanel {
+public class TitlePanel extends DoubleBufferPanel {
 
     private GameManager manager; // 게임 관리 객체
     private ImageIcon mainbackgroundImageIcon; // 배경 이미지 아이콘
@@ -26,34 +28,24 @@ public class TitlePanel extends JPanel {
     private BufferedImage[] title1;
     private BufferedImage[] title2;
     private BufferedImage[] title3;
+    private BufferedImage[] start_button;
+    private BufferedImage[] reset_button;
+    private BufferedImage[] exit_button;
     
-    private int animationIndex = 0; // 현재 애니메이션 단계
+    
     private int animationStep = 0; // 현재 애니메이션의 순서
     private Timer animationTimer; // 애니메이션 타이머
     
     private ArrayList<ImageData> imagelist;
+    private ArrayList<ImageData> button_imagelist;
     private int animationState = 0; // 현재 애니메이션 상태
+    private int animationState2 = 0; // 현재 애니메이션 상태
     private int animationSubIndex = 0; // 현재 상태 내에서의 프레임 인덱스
     
-    private int[][] animationFrame = {
-    							  {0,1,2,3},
-    							  {0,1,4,8,12,22,32,42,52,62},
-    							  {0,1,5,9,13,23,33,43,53,63,12,22,32,42,52,62},
-    							  {0,1,6,10,14,24,34,44,54,64,13,23,33,43,53,63,12,22,32,42,52,62},
-    							  {0,1,7,11,15,25,35,45,55,65,14,24,34,44,54,64,13,23,33,43,53,63,12,22,32,42,52,62},
-    							  {0,1,7,11,16,26,36,46,56,66,15,25,35,45,55,65,14,24,34,44,54,64,13,23,33,43,53,63,12,22,32,42,52,62},
-    							  {0,1,7,11,17,27,37,47,57,67,16,26,36,46,56,66,15,25,35,45,55,65,14,24,34,44,54,64,13,23,33,43,53,63,12,22,32,42,52,62},
-    							  {0,1,7,11,18,28,38,48,58,68,17,27,37,47,57,67,16,26,36,46,56,66,15,25,35,45,55,65,14,24,34,44,54,64,13,23,33,43,53,63,12,22,32,42,52,62},
-    							  {0,1,7,11,19,29,39,49,59,69,28,38,48,58,68,17,27,37,47,57,67,16,26,36,46,56,66,15,25,35,45,55,65,14,24,34,44,54,64,13,23,33,43,53,63,12,22,32,42,52,62},
-    							  {0,1,7,11,20,30,40,50,60,70,19,29,39,49,59,69,28,38,48,58,68,17,27,37,47,57,67,16,26,36,46,56,66,15,25,35,45,55,65,14,24,34,44,54,64,13,23,33,43,53,63,12,22,32,42,52,62},
-    							  {0,1,7,11,21,31,41,51,61,71,20,30,40,50,60,70,19,29,39,49,59,69,28,38,48,58,68,17,27,37,47,57,67,16,26,36,46,56,66,15,25,35,45,55,65,14,24,34,44,54,64,13,23,33,43,53,63,12,22,32,42,52,62},
-    							  {0,1,7,11,72,21,31,41,51,61,71,20,30,40,50,60,70,19,29,39,49,59,69,28,38,48,58,68,17,27,37,47,57,67,16,26,36,46,56,66,15,25,35,45,55,65,14,24,34,44,54,64,13,23,33,43,53,63,12,22,32,42,52,62},
-    							  {0,1,7,11,73,72,21,31,41,51,61,71,20,30,40,50,60,70,19,29,39,49,59,69,28,38,48,58,68,17,27,37,47,57,67,16,26,36,46,56,66,15,25,35,45,55,65,14,24,34,44,54,64,13,23,33,43,53,63,12,22,32,42,52,62},
-    							  {0,1,7,11,74,73,72,21,31,41,51,61,71,20,30,40,50,60,70,19,29,39,49,59,69,28,38,48,58,68,17,27,37,47,57,67,16,26,36,46,56,66,15,25,35,45,55,65,14,24,34,44,54,64,13,23,33,43,53,63,12,22,32,42,52,62},
-    							  {0,1,7,11,75,74,73,72,21,31,41,51,61,71,20,30,40,50,60,70,19,29,39,49,59,69,28,38,48,58,68,17,27,37,47,57,67,16,26,36,46,56,66,15,25,35,45,55,65,14,24,34,44,54,64,13,23,33,43,53,63,12,22,32,42,52,62},
-    							  {0,1,7,11,76,75,74,73,72,21,31,41,51,61,71,20,30,40,50,60,70,19,29,39,49,59,69,28,38,48,58,68,17,27,37,47,57,67,16,26,36,46,56,66,15,25,35,45,55,65,14,24,34,44,54,64,13,23,33,43,53,63,12,22,32,42,52,62},
-    							  {0,1,7,11}		  
-    							  };
+    private int[][] animationFrame;
+    private int[][] button_animationFrame;
+    
+    private int count;
     
     private int title1_x;
     private int title1_y;
@@ -68,6 +60,13 @@ public class TitlePanel extends JPanel {
     private int panel1_y;
     private int panel2_x;
     private int panel2_y;
+    
+    private int button1_x;
+    private int button1_y;
+    private int button2_x;
+    private int button2_y;
+    private int button3_x;
+    private int button3_y;
 
     // TitlePanel 생성자
     public TitlePanel(GameManager manager) {
@@ -77,6 +76,8 @@ public class TitlePanel extends JPanel {
         	this.title1 = loadSpriteSheet("/UI/bang2-Sheet.png", 192, 64);
         	this.title2 = loadSpriteSheet("/UI/bang3-Sheet.png", 192, 64);
 			this.title3 = loadSpriteSheet("/UI/title-Sheet1.png", 256, 1);
+			this.start_button = loadSpriteSheet("/UI/start.png",2,2);
+			initiallizeButtonImageList();
 			
 			this.title1_x = 27;
 			this.title1_y = 27;
@@ -91,8 +92,20 @@ public class TitlePanel extends JPanel {
 		    this.panel1_y = 18;
 		    this.panel2_x = 18;
 		    this.panel2_y = 120;
-		    startAnimation();
-		    initializeImageList();
+		    
+		    this.button1_x = 50;
+		    this.button1_y = 400;
+		    this.button2_x = 250;
+		    this.button2_y = 500;
+		    this.button3_x = 250;
+		    this.button3_y = 600;
+		    
+		    
+		    initializeAnimationFrames();
+		    
+	        initializeImageList();
+	        startAnimation();
+	        startButtonAnimation(); 
 			
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
@@ -102,7 +115,7 @@ public class TitlePanel extends JPanel {
         setLayout(null);
 
         // 배경 이미지 초기화
-        mainbackgroundImageIcon = new ImageIcon(getClass().getResource("/background/mainback.jpg"));
+        mainbackgroundImageIcon = new ImageIcon(getClass().getResource("/background/titleback.png"));
         
         // 버튼 생성 및 설정
         createButtons();
@@ -201,31 +214,331 @@ public class TitlePanel extends JPanel {
         imagelist.add(new ImageData(this.title3[62], this.title3_x, this.title3_y + 62));
         imagelist.add(new ImageData(this.title3[63], this.title3_x, this.title3_y + 63));
         imagelist.add(new ImageData(this.title3[64], this.title3_x, this.title3_y + 64));
+        imagelist.add(new ImageData(this.titlePanel[0], this.panel2_x-3,this.panel2_y + 100 ));
+        imagelist.add(new ImageData(this.titlePanel[0], this.panel2_x+50,this.panel2_y + 100 ));
+        
+    }
+    
+    private void initiallizeButtonImageList() {
+    	button_imagelist = new ArrayList<>();
+        count = 0;
+        
+        for(int i = 0; i < 32; i ++) {
+        	button_imagelist.add(new ImageData(this.start_button[count], this.button1_x, this.button1_y));
+        	count++;
+        	button_imagelist.add(new ImageData(this.start_button[count], this.button1_x + 2, this.button1_y));
+        	count++;
+        	button_imagelist.add(new ImageData(this.start_button[count], this.button1_x + 4, this.button1_y));
+        	count++;
+        	button_imagelist.add(new ImageData(this.start_button[count], this.button1_x + 6, this.button1_y));
+        	count++;
+        	button_imagelist.add(new ImageData(this.start_button[count], this.button1_x + 8, this.button1_y));
+        	count++;
+        	button_imagelist.add(new ImageData(this.start_button[count], this.button1_x + 10, this.button1_y));
+        	count++;
+        	button_imagelist.add(new ImageData(this.start_button[count], this.button1_x + 12, this.button1_y));
+        	count++;
+        	button_imagelist.add(new ImageData(this.start_button[count], this.button1_x + 14, this.button1_y));
+        	count++;
+        	button_imagelist.add(new ImageData(this.start_button[count], this.button1_x + 16, this.button1_y));
+        	count++;
+        	button_imagelist.add(new ImageData(this.start_button[count], this.button1_x + 18, this.button1_y));
+        	count++;
+        	button_imagelist.add(new ImageData(this.start_button[count], this.button1_x + 20, this.button1_y));
+        	count++;
+        	button_imagelist.add(new ImageData(this.start_button[count], this.button1_x + 22, this.button1_y));
+        	count++;
+        	button_imagelist.add(new ImageData(this.start_button[count], this.button1_x + 24, this.button1_y));
+        	count++;
+        	button_imagelist.add(new ImageData(this.start_button[count], this.button1_x + 26, this.button1_y));
+        	count++;
+        	button_imagelist.add(new ImageData(this.start_button[count], this.button1_x + 28, this.button1_y));
+        	count++;
+        	button_imagelist.add(new ImageData(this.start_button[count], this.button1_x + 30, this.button1_y));
+        	count++;
+        	button_imagelist.add(new ImageData(this.start_button[count], this.button1_x + 32, this.button1_y));
+        	count++;
+        	button_imagelist.add(new ImageData(this.start_button[count], this.button1_x + 34, this.button1_y));
+        	count++;
+        	button_imagelist.add(new ImageData(this.start_button[count], this.button1_x + 36, this.button1_y));
+        	count++;
+        	button_imagelist.add(new ImageData(this.start_button[count], this.button1_x + 38, this.button1_y));
+        	count++;
+        	button_imagelist.add(new ImageData(this.start_button[count], this.button1_x + 40, this.button1_y));
+        	count++;
+        	button_imagelist.add(new ImageData(this.start_button[count], this.button1_x + 42, this.button1_y));
+        	count++;
+        	button_imagelist.add(new ImageData(this.start_button[count], this.button1_x + 44, this.button1_y));
+        	count++;
+        	button_imagelist.add(new ImageData(this.start_button[count], this.button1_x + 46, this.button1_y));
+        	count++;
+        	button_imagelist.add(new ImageData(this.start_button[count], this.button1_x + 48, this.button1_y));
+        	count++;
+        	button_imagelist.add(new ImageData(this.start_button[count], this.button1_x + 50, this.button1_y));
+        	count++;
+        	button_imagelist.add(new ImageData(this.start_button[count], this.button1_x + 52, this.button1_y));
+        	count++;
+        	button_imagelist.add(new ImageData(this.start_button[count], this.button1_x + 54, this.button1_y));
+        	count++;
+        	button_imagelist.add(new ImageData(this.start_button[count], this.button1_x + 56, this.button1_y));
+        	count++;
+        	button_imagelist.add(new ImageData(this.start_button[count], this.button1_x + 58, this.button1_y));
+        	count++;
+        	button_imagelist.add(new ImageData(this.start_button[count], this.button1_x + 60, this.button1_y));
+        	count++;
+        	button_imagelist.add(new ImageData(this.start_button[count], this.button1_x + 62, this.button1_y));
+        	count++;
+        	button_imagelist.add(new ImageData(this.start_button[count], this.button1_x + 64, this.button1_y));
+        	count++;
+        	button_imagelist.add(new ImageData(this.start_button[count], this.button1_x + 66, this.button1_y));
+        	count++;
+        	button_imagelist.add(new ImageData(this.start_button[count], this.button1_x + 68, this.button1_y));
+        	count++;
+        	button_imagelist.add(new ImageData(this.start_button[count], this.button1_x + 70, this.button1_y));
+        	count++;
+        	button_imagelist.add(new ImageData(this.start_button[count], this.button1_x + 72, this.button1_y));
+        	count++;
+        	button_imagelist.add(new ImageData(this.start_button[count], this.button1_x + 74, this.button1_y));
+        	count++;
+        	button_imagelist.add(new ImageData(this.start_button[count], this.button1_x + 76, this.button1_y));
+        	count++;
+        	button_imagelist.add(new ImageData(this.start_button[count], this.button1_x + 78, this.button1_y));
+        	count++;
+        	button_imagelist.add(new ImageData(this.start_button[count], this.button1_x + 80, this.button1_y));
+        	count++;
+        	button_imagelist.add(new ImageData(this.start_button[count], this.button1_x + 82, this.button1_y));
+        	count++;
+        	button_imagelist.add(new ImageData(this.start_button[count], this.button1_x + 84, this.button1_y));
+        	count++;
+        	button_imagelist.add(new ImageData(this.start_button[count], this.button1_x + 86, this.button1_y));
+        	count++;
+        	button_imagelist.add(new ImageData(this.start_button[count], this.button1_x + 88, this.button1_y));
+        	count++;
+        	button_imagelist.add(new ImageData(this.start_button[count], this.button1_x + 90, this.button1_y));
+        	count++;
+        	button_imagelist.add(new ImageData(this.start_button[count], this.button1_x + 92, this.button1_y));
+        	count++;
+        	button_imagelist.add(new ImageData(this.start_button[count], this.button1_x + 94, this.button1_y));
+        	count++;
+        	button_imagelist.add(new ImageData(this.start_button[count], this.button1_x + 96, this.button1_y));
+        	count++;
+        	button_imagelist.add(new ImageData(this.start_button[count], this.button1_x + 98, this.button1_y));
+        	count++;
+        	button_imagelist.add(new ImageData(this.start_button[count], this.button1_x + 100, this.button1_y));
+        	count++;
+        	button_imagelist.add(new ImageData(this.start_button[count], this.button1_x + 102, this.button1_y));
+        	count++;
+        	button_imagelist.add(new ImageData(this.start_button[count], this.button1_x + 104, this.button1_y));
+        	count++;
+        	button_imagelist.add(new ImageData(this.start_button[count], this.button1_x + 106, this.button1_y));
+        	count++;
+        	button_imagelist.add(new ImageData(this.start_button[count], this.button1_x + 108, this.button1_y));
+        	count++;
+        	button_imagelist.add(new ImageData(this.start_button[count], this.button1_x + 110, this.button1_y));
+        	count++;
+        	button_imagelist.add(new ImageData(this.start_button[count], this.button1_x + 112, this.button1_y));
+        	count++;
+        	button_imagelist.add(new ImageData(this.start_button[count], this.button1_x + 114, this.button1_y));
+        	count++;
+        	button_imagelist.add(new ImageData(this.start_button[count], this.button1_x + 116, this.button1_y));
+        	count++;
+        	button_imagelist.add(new ImageData(this.start_button[count], this.button1_x + 118, this.button1_y));
+        	count++;
+        	button_imagelist.add(new ImageData(this.start_button[count], this.button1_x + 120, this.button1_y));
+        	count++;
+        	button_imagelist.add(new ImageData(this.start_button[count], this.button1_x + 122, this.button1_y));
+        	count++;
+        	button_imagelist.add(new ImageData(this.start_button[count], this.button1_x + 124, this.button1_y)); 
+        	count++;
+        	button_imagelist.add(new ImageData(this.start_button[count], this.button1_x + 126, this.button1_y)); 
+        	count++;
+        	button_imagelist.add(new ImageData(this.start_button[count], this.button1_x + 128, this.button1_y)); 
+        	count++;
+        	button_imagelist.add(new ImageData(this.start_button[count], this.button1_x + 130, this.button1_y)); 
+        	count++;
+        	button_imagelist.add(new ImageData(this.start_button[count], this.button1_x + 132, this.button1_y)); 
+        	count++;
+        	button_imagelist.add(new ImageData(this.start_button[count], this.button1_x + 134, this.button1_y)); 
+        	count++;
+        	button_imagelist.add(new ImageData(this.start_button[count], this.button1_x + 136, this.button1_y)); 
+        	count++;
+        	button_imagelist.add(new ImageData(this.start_button[count], this.button1_x + 138, this.button1_y)); 
+        	count++;
+        	button_imagelist.add(new ImageData(this.start_button[count], this.button1_x + 140, this.button1_y)); 
+        	count++;
+        	button_imagelist.add(new ImageData(this.start_button[count], this.button1_x + 142, this.button1_y)); 
+        	count++;
+        	button_imagelist.add(new ImageData(this.start_button[count], this.button1_x + 144, this.button1_y)); 
+        	count++;
+        	button_imagelist.add(new ImageData(this.start_button[count], this.button1_x + 146, this.button1_y)); 
+        	count++;
+        	button_imagelist.add(new ImageData(this.start_button[count], this.button1_x + 148, this.button1_y)); 
+        	count++;
+        	button_imagelist.add(new ImageData(this.start_button[count], this.button1_x + 150, this.button1_y)); 
+        	count++;
+        	button_imagelist.add(new ImageData(this.start_button[count], this.button1_x + 152, this.button1_y)); 
+        	count++;
+        	button_imagelist.add(new ImageData(this.start_button[count], this.button1_x + 154, this.button1_y)); 
+        	count++;
+        	button_imagelist.add(new ImageData(this.start_button[count], this.button1_x + 156, this.button1_y)); 
+        	count++;
+        	button_imagelist.add(new ImageData(this.start_button[count], this.button1_x + 158, this.button1_y)); 
+        	count++;
+        	button_imagelist.add(new ImageData(this.start_button[count], this.button1_x + 160, this.button1_y)); 
+        	count++;
+        	button_imagelist.add(new ImageData(this.start_button[count], this.button1_x + 162, this.button1_y)); 
+        	count++;
+        	button_imagelist.add(new ImageData(this.start_button[count], this.button1_x + 164, this.button1_y)); 
+        	count++;
+        	button_imagelist.add(new ImageData(this.start_button[count], this.button1_x + 166, this.button1_y)); 
+        	count++;
+        	button_imagelist.add(new ImageData(this.start_button[count], this.button1_x + 168, this.button1_y)); 
+        	count++;
+        	button_imagelist.add(new ImageData(this.start_button[count], this.button1_x + 170, this.button1_y)); 
+        	count++;
+        	button_imagelist.add(new ImageData(this.start_button[count], this.button1_x + 172, this.button1_y));
+        	count++;
+        	button_imagelist.add(new ImageData(this.start_button[count], this.button1_x + 174, this.button1_y)); 
+        	count++;
+        	button_imagelist.add(new ImageData(this.start_button[count], this.button1_x + 176, this.button1_y)); 
+        	count++;
+        	button_imagelist.add(new ImageData(this.start_button[count], this.button1_x + 178, this.button1_y)); 
+        	count++;
+        	button_imagelist.add(new ImageData(this.start_button[count], this.button1_x + 180, this.button1_y)); 
+        	count++;
+        	button_imagelist.add(new ImageData(this.start_button[count], this.button1_x + 182, this.button1_y)); 
+			count++;
+        	button_imagelist.add(new ImageData(this.start_button[count], this.button1_x + 184, this.button1_y)); 
+			count++;
+        	button_imagelist.add(new ImageData(this.start_button[count], this.button1_x + 186, this.button1_y)); 
+			count++;
+        	button_imagelist.add(new ImageData(this.start_button[count], this.button1_x + 188, this.button1_y)); 
+			count++;
+        	button_imagelist.add(new ImageData(this.start_button[count], this.button1_x + 190, this.button1_y)); 
+			count++;
+        	button_imagelist.add(new ImageData(this.start_button[count], this.button1_x + 192, this.button1_y)); 
+			count++;
+        	button_imagelist.add(new ImageData(this.start_button[count], this.button1_x + 194, this.button1_y)); 
+			count++;
+        	button_imagelist.add(new ImageData(this.start_button[count], this.button1_x + 196, this.button1_y)); 
+			count++;
+        	button_imagelist.add(new ImageData(this.start_button[count], this.button1_x + 198, this.button1_y)); 
+			count++;
+        	button_imagelist.add(new ImageData(this.start_button[count], this.button1_x + 200, this.button1_y)); 
+			count++;
+        	button_imagelist.add(new ImageData(this.start_button[count], this.button1_x + 202, this.button1_y)); 
+			count++;
+        	button_imagelist.add(new ImageData(this.start_button[count], this.button1_x + 204, this.button1_y)); 
+			count++;
+        	button_imagelist.add(new ImageData(this.start_button[count], this.button1_x + 206, this.button1_y)); 
+			count++;
+        	button_imagelist.add(new ImageData(this.start_button[count], this.button1_x + 208, this.button1_y)); 
+			count++;
+        	button_imagelist.add(new ImageData(this.start_button[count], this.button1_x + 210, this.button1_y)); 
+			count++;
+        	button_imagelist.add(new ImageData(this.start_button[count], this.button1_x + 212, this.button1_y)); 
+			count++;
+        	button_imagelist.add(new ImageData(this.start_button[count], this.button1_x + 214, this.button1_y)); 
+			count++;
+        	button_imagelist.add(new ImageData(this.start_button[count], this.button1_x + 216, this.button1_y)); 
+			count++;
+        	button_imagelist.add(new ImageData(this.start_button[count], this.button1_x + 218, this.button1_y)); 
+			count++;
+        	button_imagelist.add(new ImageData(this.start_button[count], this.button1_x + 220, this.button1_y)); 
+			count++;
+        	button_imagelist.add(new ImageData(this.start_button[count], this.button1_x + 222, this.button1_y)); 
+			count++;
+        	button_imagelist.add(new ImageData(this.start_button[count], this.button1_x + 224, this.button1_y)); 
+			count++;
+        	button_imagelist.add(new ImageData(this.start_button[count], this.button1_x + 226, this.button1_y)); 
+			count++;
+        	button_imagelist.add(new ImageData(this.start_button[count], this.button1_x + 228, this.button1_y)); 
+			count++;
+        	button_imagelist.add(new ImageData(this.start_button[count], this.button1_x + 230, this.button1_y)); 
+			count++;
+        	button_imagelist.add(new ImageData(this.start_button[count], this.button1_x + 232, this.button1_y)); 
+			count++;
+        	button_imagelist.add(new ImageData(this.start_button[count], this.button1_x + 234, this.button1_y)); 
+			count++;
+        	button_imagelist.add(new ImageData(this.start_button[count], this.button1_x + 236, this.button1_y)); 
+			count++;
+        	button_imagelist.add(new ImageData(this.start_button[count], this.button1_x + 238, this.button1_y)); 
+			count++;
+
+	        this.button1_y +=2;
+	    }
+    
     }
 
-    private void startAnimation() {
-        animationStep = 0;
-        animationState = 0;
+    private void initializeAnimationFrames() {
+    	animationFrame = new int[][]{
+				  {0,1,2,3,77,78,},
+				  {0,1,77,78,4,8,12,22,32,42,52,62},
+				  {0,1,77,78,5,9,13,23,33,43,53,63,12,22,32,42,52,62},
+				  {0,1,77,78,6,10,14,24,34,44,54,64,13,23,33,43,53,63,12,22,32,42,52,62},
+				  {0,1,77,78,7,11,15,25,35,45,55,65,14,24,34,44,54,64,13,23,33,43,53,63,12,22,32,42,52,62},
+				  {0,1,77,78,7,11,16,26,36,46,56,66,15,25,35,45,55,65,14,24,34,44,54,64,13,23,33,43,53,63,12,22,32,42,52,62},
+				  {0,1,77,78,7,11,17,27,37,47,57,67,16,26,36,46,56,66,15,25,35,45,55,65,14,24,34,44,54,64,13,23,33,43,53,63,12,22,32,42,52,62},
+				  {0,1,77,78,7,11,18,28,38,48,58,68,17,27,37,47,57,67,16,26,36,46,56,66,15,25,35,45,55,65,14,24,34,44,54,64,13,23,33,43,53,63,12,22,32,42,52,62},
+				  {0,1,77,78,7,11,19,29,39,49,59,69,28,38,48,58,68,17,27,37,47,57,67,16,26,36,46,56,66,15,25,35,45,55,65,14,24,34,44,54,64,13,23,33,43,53,63,12,22,32,42,52,62},
+				  {0,1,77,78,7,11,20,30,40,50,60,70,19,29,39,49,59,69,28,38,48,58,68,17,27,37,47,57,67,16,26,36,46,56,66,15,25,35,45,55,65,14,24,34,44,54,64,13,23,33,43,53,63,12,22,32,42,52,62},
+				  {0,1,77,78,7,11,21,31,41,51,61,71,20,30,40,50,60,70,19,29,39,49,59,69,28,38,48,58,68,17,27,37,47,57,67,16,26,36,46,56,66,15,25,35,45,55,65,14,24,34,44,54,64,13,23,33,43,53,63,12,22,32,42,52,62},
+				  {0,1,77,78,7,11,72,21,31,41,51,61,71,20,30,40,50,60,70,19,29,39,49,59,69,28,38,48,58,68,17,27,37,47,57,67,16,26,36,46,56,66,15,25,35,45,55,65,14,24,34,44,54,64,13,23,33,43,53,63,12,22,32,42,52,62},
+				  {0,1,77,78,7,11,73,72,21,31,41,51,61,71,20,30,40,50,60,70,19,29,39,49,59,69,28,38,48,58,68,17,27,37,47,57,67,16,26,36,46,56,66,15,25,35,45,55,65,14,24,34,44,54,64,13,23,33,43,53,63,12,22,32,42,52,62},
+				  {0,1,77,78,7,11,74,73,72,21,31,41,51,61,71,20,30,40,50,60,70,19,29,39,49,59,69,28,38,48,58,68,17,27,37,47,57,67,16,26,36,46,56,66,15,25,35,45,55,65,14,24,34,44,54,64,13,23,33,43,53,63,12,22,32,42,52,62},
+				  {0,1,77,78,7,11,75,74,73,72,21,31,41,51,61,71,20,30,40,50,60,70,19,29,39,49,59,69,28,38,48,58,68,17,27,37,47,57,67,16,26,36,46,56,66,15,25,35,45,55,65,14,24,34,44,54,64,13,23,33,43,53,63,12,22,32,42,52,62},
+				  {0,1,77,78,7,11,76,75,74,73,72,21,31,41,51,61,71,20,30,40,50,60,70,19,29,39,49,59,69,28,38,48,58,68,17,27,37,47,57,67,16,26,36,46,56,66,15,25,35,45,55,65,14,24,34,44,54,64,13,23,33,43,53,63,12,22,32,42,52,62},		  
+				  };
+				  
+		button_animationFrame = new int[8][480];
+		List<Integer> indexList = new ArrayList<>();
+        for (int i = 0; i < button_imagelist.size(); i++) {
+            indexList.add(i);
+        }
 
-        animationTimer = new Timer(1, e -> {
-            animationStep++;
+        // 2. 무작위 섞기
+        Collections.shuffle(indexList);
 
-            // 다음 상태로 이동
-            if (animationStep >= animationFrame[animationState].length) {
-                animationStep = 0;
-                animationState++;
-                if (animationState >= animationFrame.length) {
-                    animationState = 0; // 상태를 루프 처리
-                }
+        // 3. 480개씩 나누어 button_animationFrame에 저장
+        int index = 0;
+        for (int i = 0; i < 8; i++) {
+            for (int j = 0; j < 480; j++) {
+                button_animationFrame[i][j] = indexList.get(index++);
             }
-
+        }
+		
+    }
+    
+    private void startAnimation() {
+        animationState = 0; // 시작 상태 초기화
+        animationTimer = new Timer(400, e -> {
+            if (animationState < animationFrame.length - 1) {
+                animationState++; // 다음 상태로 이동
+            } else {
+                animationTimer.stop(); // 마지막 상태에 도달하면 타이머 정지
+            }
             repaint(); // 화면 갱신
         });
-
-        Timer delayTimer = new Timer(2000, startEvent -> animationTimer.start());
-        delayTimer.setRepeats(false);
-        delayTimer.start();
+        animationTimer.start(); // 타이머 시작
     }
+    
+    private void startButtonAnimation() {
+        animationState2 = 0; // 시작 상태 초기화
+        animationTimer = new Timer(1000, e -> {
+            if (  animationState2 < button_animationFrame.length - 1) {
+                animationState++; // 다음 상태로 이동
+            } else if (animationState == button_animationFrame.length - 1) {
+                // 마지막 프레임: 1~8 상태를 동시에 표시
+            	  animationState2++;
+                repaint(); // 화면 갱신
+            } else {
+                animationTimer.stop(); // 애니메이션 완료
+            }
+            repaint(); // 화면 갱신
+        });
+        animationTimer.start(); // 타이머 시작
+    }
+
     
     // 버튼 생성 및 설정 메서드
     private void createButtons() {
@@ -276,26 +589,49 @@ public class TitlePanel extends JPanel {
     @Override
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
+        initBuffer();
 
-        // 배경 이미지가 있을 경우 그리기
-        if (mainbackgroundImageIcon != null) {
-            Image backgroundImage = mainbackgroundImageIcon.getImage();
-            g.drawImage(backgroundImage, 0, 0, getWidth(), getHeight(), this);
-        } else {
-            g.setColor(Color.BLACK);
-            g.fillRect(0, 0, getWidth(), getHeight());
-        }
+        Graphics bg = getBufferedGraphics();
+        if (bg != null) {
+            // 배경 이미지 그리기
+            if (mainbackgroundImageIcon != null) {
+                Image backgroundImage = mainbackgroundImageIcon.getImage();
+                bg.drawImage(backgroundImage, 0, 0, getWidth(), getHeight(), this);
+            } else {
+                bg.setColor(Color.BLACK); // 이미지가 없으면 배경색을 검정으로 설정
+                bg.fillRect(0, 0, getWidth(), getHeight());
+            }
 
-        // 현재 animationState에 해당하는 모든 프레임 그리기
-        if (animationState < animationFrame.length) {
-            int[] currentFrames = animationFrame[animationState];
-            for (int frame : currentFrames) {
-                if (frame < imagelist.size()) {
-                    ImageData imageData = imagelist.get(frame);
+            // 애니메이션 그리기
+            if (animationState < animationFrame.length) {
+                int[] frames = animationFrame[animationState];
+                for (int frame : frames) {
+                    if (frame < imagelist.size()) {
+                        ImageData imageData = imagelist.get(frame);
+                        bg.drawImage(imageData.image, imageData.x, imageData.y, this);
+                    }
+                }
+            }
+            
+            // button_animationFrame 그리기
+            if (  animationState2 < button_animationFrame.length) {
+                // 현재 상태에 있는 프레임들을 하나씩 그리기
+                for (int index : button_animationFrame[  animationState2]) {
+                    ImageData imageData = button_imagelist.get(index);
                     g.drawImage(imageData.image, imageData.x, imageData.y, this);
+                    System.out.println("is draw");
+                }
+            } else {
+                // 마지막 상태: 1~8 프레임을 동시에 그리기
+                for (int state = 0; state < 8; state++) {
+                    for (int index : button_animationFrame[state]) {
+                        ImageData imageData = button_imagelist.get(index);
+                        g.drawImage(imageData.image, imageData.x, imageData.y, this);
+                    }
                 }
             }
         }
+        super.paintComponent(g); // 더블 버퍼링된 화면을 그리기
     }
     
     

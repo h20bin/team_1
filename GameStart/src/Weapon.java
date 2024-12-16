@@ -9,15 +9,17 @@ public class Weapon {
     private int fireRate; // 발사 속도
     private int damage; // 무기의 데미지
     private int bulletSpeed; // 탄환의 속도
+    public int weaponID;
     private BufferedImage[] bulletFrames; // 탄환의 프레임
 
     // 매개변수를 받는 생성자
-    public Weapon(BufferedImage sprite, int fireRate, int damage, int bulletSpeed, BufferedImage[] bulletFrames) {
+    public Weapon(BufferedImage sprite, int fireRate, int damage, int bulletSpeed, BufferedImage[] bulletFrames , int weaponID) {
         this.sprite = sprite;
         this.fireRate = fireRate;
         this.damage = damage;
         this.bulletSpeed = bulletSpeed;
         this.bulletFrames = bulletFrames;
+        this.weaponID = weaponID;
     }
 
     // 기본 생성자 추가 (기본값 설정)

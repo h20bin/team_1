@@ -31,7 +31,7 @@ public class StagePanel extends JPanel {
 
             // 버튼 생성: "Stage " + i로 버튼 라벨 설정
             stageButtons[i - 1] = new JButton("Stage " + stageNum);
-            stageButtons[i - 1].setBounds(50, yPosition, 300, 50);  // 버튼 위치와 크기 설정
+            stageButtons[i - 1].setBounds(0, yPosition, 500, 50);  // 버튼 위치와 크기 설정
 
             // 버튼 클릭 시 실행할 동작 설정
             stageButtons[i - 1].addActionListener(e -> { 
@@ -49,12 +49,12 @@ public class StagePanel extends JPanel {
             add(stageButtons[i - 1]);
 
             // 버튼 간의 간격을 60px로 설정
-            yPosition += 60;  // 버튼 간격 설정
+            yPosition += 50;  // 버튼 간격 설정
         }
 
         // 로비로 돌아가기 버튼 생성
         JButton lobbyButton = new JButton("Go to Lobby");
-        lobbyButton.setBounds(150, 700, 100, 50);  // 버튼 위치를 조정 (여기서는 yPosition에 맞춰 설정)
+        lobbyButton.setBounds(400, 0, 100, 50);  // 버튼 위치를 조정 (여기서는 yPosition에 맞춰 설정)
         lobbyButton.addActionListener(e -> manager.switchPanel(new LobbyPanel(manager)));  // 클릭 시 로비 화면으로 전환
         add(lobbyButton);
     }

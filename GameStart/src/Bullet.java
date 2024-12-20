@@ -82,7 +82,7 @@ public class Bullet {
 	            }
 	        } else if (state == BulletState.IMPACT) {
 	            // IMPACT 상태의 애니메이션 처리 (5~13번 프레임 재생)
-	            currentFrame = 4 + (frameCount / 1);
+	            currentFrame = 12 + (frameCount / 1);
 	            if (currentFrame >= frames.length - 1) {
 	                // 마지막 프레임까지 재생되면 EXIT 상태로 전환
 	                state = BulletState.EXIT;
@@ -97,13 +97,14 @@ public class Bullet {
     	else if(type == BulletType.wea3) {
 	        if (state == BulletState.NORMAL) {
 	            // NORMAL 상태의 애니메이션 처리
-	            if (frameCount / animationSpeed < 4) {
-	                currentFrame = (frameCount / animationSpeed) % 12;
+	            if (frameCount / animationSpeed < 6) {
+	                currentFrame = (frameCount / 1) % 12;
 	            } else {
 	                currentFrame = 12;
 	            }
 	        } else if (state == BulletState.IMPACT) {
 	            // IMPACT 상태의 애니메이션 처리 (5~13번 프레임 재생)m
+	        	currentFrame = 15 + (frameCount / 1);
 	            if (currentFrame >= frames.length - 1) {
 	                // 마지막 프레임까지 재생되면 EXIT 상태로 전환
 	                state = BulletState.EXIT;

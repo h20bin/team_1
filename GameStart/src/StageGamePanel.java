@@ -28,6 +28,8 @@ public class StageGamePanel extends JPanel implements ActionListener, KeyListene
     private boolean isShooting;
     private int stageNum;
     private BufferedImage starImage;
+    private int playerSpeed;
+    private int playerSpeed2 = 0;
 
     private JButton pauseButton; // 일시정지 버튼
     private JButton mainMenuButton; // 메인 메뉴로 돌아가는 버튼
@@ -40,7 +42,8 @@ public class StageGamePanel extends JPanel implements ActionListener, KeyListene
         initializeStage(stageNum);
         loadShootSound(); // 총 소리 로드
         loadBackgroundMusic(); // 배경 음악 로드
-        
+        this.playerSpeed = this.player.getspeed();
+        this.playerSpeed2 -= this.playerSpeed;
         // 별 이미지 로드 시 알파 채널을 처리하도록 수정
         try {
             starImage = ImageIO.read(Paths.get("GameStart/src/background/star.png").toFile());
@@ -55,7 +58,7 @@ public class StageGamePanel extends JPanel implements ActionListener, KeyListene
             e.printStackTrace();
             starImage = new BufferedImage(1, 1, BufferedImage.TYPE_INT_ARGB); // 오류 발생 시 빈 이미지 생성
         }
-
+        
         
         // 게임 루프 시작
         timer = new Timer(16, this);
@@ -238,10 +241,10 @@ public class StageGamePanel extends JPanel implements ActionListener, KeyListene
 
     private void updateGame() {
         // 키 입력에 따른 플레이어 이동
-        if (keys[KeyEvent.VK_A]) player.move(-10, 0);
-        if (keys[KeyEvent.VK_D]) player.move(10, 0);
-        if (keys[KeyEvent.VK_W]) player.move(0, -10);
-        if (keys[KeyEvent.VK_S]) player.move(0, 10);
+        if (keys[KeyEvent.VK_A]) player.move(this.playerSpeed2, 0);
+        if (keys[KeyEvent.VK_D]) player.move(this.playerSpeed, 0);
+        if (keys[KeyEvent.VK_W]) player.move(0,this.playerSpeed2);
+        if (keys[KeyEvent.VK_S]) player.move(0,this.playerSpeed);
 
         // 적 이동
         for (Enemy enemy : enemies) {
@@ -291,7 +294,7 @@ public class StageGamePanel extends JPanel implements ActionListener, KeyListene
                     if (enemy.getHealth() <= 0) {
                         enemyIterator.remove();
                         bullet.render(getGraphics());
-                        player.addGold(10);
+                        player.addGold(1000);
                     }
                     if (bullet.isFinished()) {
                     	bulletIterator.remove(); // 충돌한 총알 제거

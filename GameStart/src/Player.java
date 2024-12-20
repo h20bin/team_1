@@ -9,8 +9,9 @@ public class Player extends Character {
     private int maxHP;
     private int currentHP;
     private int gold;
+    private int speed = 10;
     public int weaponNum = 1;
-    private double attackSpeed = 1000.0; // 공격 속도 (초당 2발)
+    private double attackSpeed = 5.0; // 공격 속도 (초당 2발)
     private long lastAttackTime = 0; // 마지막 발사 시간 기록 (밀리초 단위)
 
     private boolean invincible;  // 무적 상태
@@ -198,7 +199,7 @@ public class Player extends Character {
     
     public void reduceAttackCycle(double amount) {
         if (weapon != null) {
-            weapon.reduceFireRate(amount);
+           this.attackSpeed += 0.5;
         }
     }
     
@@ -264,7 +265,11 @@ public class Player extends Character {
 	}
 
 	public void increaseMaxSpeed(double d) {
-		// TODO Auto-generated method stub
+		this.speed += 2;
 		
+	}
+	
+	public int getspeed() {
+		return this.speed;
 	}
 }

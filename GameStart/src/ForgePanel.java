@@ -33,8 +33,8 @@ public class ForgePanel extends JPanel {
         hpUpgradeCost = 100;
         speedUpgradeCost = 150;
         attackCycleUpgradeCost = 200;
-        loadUpgradeCostsFromFile();
-    }
+
+        }
 
     private void createAndAddTitleLabel() {
         JLabel title = createTitleLabel();
@@ -105,7 +105,7 @@ public class ForgePanel extends JPanel {
         increaseHPUpgradeCost();
         awardGoldToPlayer(50);
         updateHPButtonText(hpButton);
-        saveUpgradeCostsToFile();
+
         updateGoldLabel();
     }
 
@@ -145,7 +145,7 @@ public class ForgePanel extends JPanel {
         increaseSpeedUpgradeCost();
         awardGoldToPlayer(50);
         updateSpeedButtonText(speedButton);
-        saveUpgradeCostsToFile();
+
         updateGoldLabel();
     }
 
@@ -185,7 +185,7 @@ public class ForgePanel extends JPanel {
         increaseAttackCycleUpgradeCost();
         awardGoldToPlayer(50);
         updateAttackCycleButtonText(attackCycleButton);
-        saveUpgradeCostsToFile();
+
         updateGoldLabel();
     }
 

@@ -543,7 +543,7 @@ public class TitlePanel extends DoubleBufferPanel {
     // 버튼 생성 및 설정 메서드
     private void createButtons() {
         startButton = new JButton("Start");
-        startButton.setBounds(380, 400, 80, 40);
+        startButton.setBounds(400, 530, 100, 50);
         
         // 시작 버튼 클릭 시 이벤트 처리
         startButton.addActionListener(e -> {
@@ -555,7 +555,7 @@ public class TitlePanel extends DoubleBufferPanel {
         add(startButton);
 
         resetButton = new JButton("Reset");
-        resetButton.setBounds(380, 500, 80, 40);
+        resetButton.setBounds(400, 580, 100, 50);
         
         // 리셋 버튼 클릭 시 이벤트 처리
         resetButton.addActionListener(e -> {
@@ -567,14 +567,14 @@ public class TitlePanel extends DoubleBufferPanel {
         add(resetButton);
 
         gameInfoButton = new JButton("Game Info");
-        gameInfoButton.setBounds(40, 600, 80, 40);
+        gameInfoButton.setBounds(400, 630, 100, 50);
         
         // 게임 정보 버튼 클릭 시 이벤트 처리
         gameInfoButton.addActionListener(e -> showGameInfo()); // 게임 설명 표시
         add(gameInfoButton);
         
         exitButton = new JButton("Exit");
-        exitButton.setBounds(380, 600, 80, 40);
+        exitButton.setBounds(400, 680, 100, 50);
         
         // 종료 버튼 클릭 시 이벤트 처리
         exitButton.addActionListener(e -> {

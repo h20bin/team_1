@@ -25,7 +25,7 @@ public class LobbyPanel extends JPanel {
         // 상점 버튼
         // 버튼을 캐릭터 이미지 아래로 더 내려주기
         JButton shopButton = new JButton("Shop");
-        shopButton.setBounds(100, 380, 100, 50); // y 좌표를 380으로 설정
+        shopButton.setBounds(400, 630, 100, 50); // y 좌표를 380으로 설정
         shopButton.addActionListener(e -> {
             try {
                 manager.switchPanel(new ShopPanel(manager));
@@ -38,21 +38,21 @@ public class LobbyPanel extends JPanel {
 
         // 스테이지 버튼
         JButton stageButton = new JButton("Stage");
-        stageButton.setBounds(200, 380, 100, 50); // y 좌표를 380으로 설정
+        stageButton.setBounds(400, 580, 100, 50); // y 좌표를 380으로 설정
         stageButton.addActionListener(e -> manager.switchPanel(new StagePanel(manager)));
         stageButton.setToolTipText("Choose a stage to start the game"); // 설명 추가
         add(stageButton);
 
         // 대장장이 버튼
         JButton forgeButton = new JButton("Forge");
-        forgeButton.setBounds(300, 380, 100, 50); // y 좌표를 380으로 설정
+        forgeButton.setBounds(400, 680, 100, 50); // y 좌표를 380으로 설정
         forgeButton.addActionListener(e -> manager.switchPanel(new ForgePanel(manager)));
         forgeButton.setToolTipText("Go to the forge to upgrade your equipment"); // 설명 추가
         add(forgeButton);
 
         // TitlePanel로 가는 버튼 추가
         JButton titleButton = new JButton("Go to Main");
-        titleButton.setBounds(170, 450, 150, 50);  // 버튼 위치를 적절하게 설정
+        titleButton.setBounds(400, 0, 100, 50);  // 버튼 위치를 적절하게 설정
         titleButton.addActionListener(e -> manager.switchPanel(new TitlePanel(manager)));
         titleButton.setToolTipText("Return to the main menu"); // 설명 추가
         add(titleButton);
@@ -71,7 +71,10 @@ public class LobbyPanel extends JPanel {
             Image backgroundImage = lobbybackgroundImageIcon.getImage(); // ImageIcon에서 Image 객체 추출
             g.drawImage(backgroundImage, 0, 0, getWidth(), getHeight(), this); // 배경 이미지를 패널 크기에 맞게 그리기
         }
-
+        
+        player.x = 225;
+        player.y = 400;
+        player.weapon.clearBullets();
         player.render(g);
 
         // HUD 정보 표시

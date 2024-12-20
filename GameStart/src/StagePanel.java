@@ -11,7 +11,7 @@ public class StagePanel extends JPanel {
         setLayout(null);  // 패널의 레이아웃을 null로 설정하여 절대 위치 지정
 
         // 배경 이미지 아이콘을 클래스 경로에서 로드
-        stagebackgroundImageIcon = new ImageIcon(getClass().getResource("/background/stageback.jpeg"));
+        stagebackgroundImageIcon = new ImageIcon(getClass().getResource("/background/Stage1.png"));
 
         // 제목 라벨을 설정 (스윙 컴포넌트의 레이아웃 관리자가 없으면 위치를 직접 설정)
         JLabel title = new JLabel("Choose Stage", SwingConstants.CENTER);
@@ -78,7 +78,7 @@ public class StagePanel extends JPanel {
         // 배경 이미지가 null이 아닌 경우 배경 이미지를 그리기
         if (stagebackgroundImageIcon != null) { 
             Image backgroundImage = stagebackgroundImageIcon.getImage(); // ImageIcon에서 Image 객체 추출
-            g.drawImage(backgroundImage, 0, 0, getWidth(), getHeight(), this); // 배경 이미지를 패널 크기에 맞게 그리기
+            g.drawImage(backgroundImage, 0, 0, 576, 3000, this); // 배경 이미지를 패널 크기에 맞게 그리기
         } else { 
             // 이미지가 로드되지 않았을 경우 검정색 배경
             g.setColor(Color.BLACK);  

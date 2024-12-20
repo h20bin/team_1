@@ -145,7 +145,7 @@ public class StageGamePanel extends JPanel implements ActionListener, KeyListene
 
         // 배경 이미지 로드
         try {
-            background = ImageIO.read(Paths.get("GameStart/src/background.jpg").toFile());
+            background = ImageIO.read(Paths.get("GameStart/src/background/Stage1.png").toFile());
         } catch (IOException e) {
             e.printStackTrace();
             background = new BufferedImage(1, 1, BufferedImage.TYPE_INT_ARGB);
@@ -212,16 +212,17 @@ public class StageGamePanel extends JPanel implements ActionListener, KeyListene
     private void drawBackground(Graphics g) {
         int panelWidth = getWidth();
         int panelHeight = getHeight();
-        int bgHeight = background.getHeight();
+        int bgHeight = background.getHeight(null); // 배경 이미지의 높이 가져오기
 
-        // 배경 이미지의 반복적 그리기
-        g.drawImage(background, 0, backgroundY, panelWidth, panelHeight, this);
-        g.drawImage(background, 0, backgroundY - bgHeight, panelWidth, panelHeight, this);
-
-        // 스크롤 업데이트
-        backgroundY += 1;
+        // 배경 이미지의 현재 y값 기준으로 그리기
+        int startY = backgroundY - bgHeight + 768; // 스크롤 시 이어지도록 위쪽 배경 계산
+       
+        g.drawImage(background, 0, startY, panelWidth, bgHeight, this);
+     
+        // y값을 업데이트하여 스크롤 효과
+        backgroundY += 1; // 스크롤 속도 조정
         if (backgroundY >= bgHeight) {
-            backgroundY = 0;
+            backgroundY = 0; // 배경이 끝까지 스크롤되면 다시 초기화
         }
     }
 

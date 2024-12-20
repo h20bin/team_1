@@ -5,9 +5,11 @@ public class StagePanel extends JPanel {
     private GameManager manager; 
     private ImageIcon stagebackgroundImageIcon; 
     private JButton[] stageButtons;  // 스테이지 버튼들을 저장할 배열
+    private Player player;
 
     public StagePanel(GameManager manager) { 
-        this.manager = manager; 
+        this.manager = manager;
+        this.player = manager.getPlayer();
         setLayout(null);  // 패널의 레이아웃을 null로 설정하여 절대 위치 지정
 
         // 배경 이미지 아이콘을 클래스 경로에서 로드
@@ -38,11 +40,10 @@ public class StagePanel extends JPanel {
                 manager.switchPanel(new StageGamePanel(manager, stageNum));  // 스테이지 게임으로 전환
             });
 
-            // 첫 번째 스테이지만 활성화하고 나머지 스테이지는 비활성화
-            if (i == 1) { 
+            if (player.clearStage[i-1] == true) { 
                 stageButtons[i - 1].setEnabled(true);  // 첫 번째 스테이지는 활성화
             } else { 
-                stageButtons[i - 1].setEnabled(true);  // 나머지 스테이지는 비활성화
+                stageButtons[i - 1].setEnabled(false);  // 나머지 스테이지는 비활성화
             }
 
             // 생성한 버튼을 패널에 추가
@@ -61,8 +62,7 @@ public class StagePanel extends JPanel {
 
     // 스테이지 클리어 후 버튼 상태를 갱신하는 메서드
     public void updateStageButtons(int completedStage) { 
-        if (completedStage < 10) { 
-            // 현재 스테이지를 클리어한 경우, 그 다음 스테이지 버튼을 활성화
+        if (player.clearStage[completedStage-1] == true) { 
             stageButtons[completedStage].setEnabled(true); 
         }
     }

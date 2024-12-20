@@ -311,6 +311,7 @@ public class StageGamePanel extends JPanel implements ActionListener, KeyListene
             Rectangle goalBounds = new Rectangle(goal.x, goal.y + backgroundY, goal.width, goal.height);
             if (player.getBounds().intersects(goalBounds)) {
                 JOptionPane.showMessageDialog(this, "Stage Cleared!");
+                player.clearStage[stageNum+1] = true;
                 player.addGold(100);
                 manager.switchPanel(new LobbyPanel(manager));
                 backgroundMusic.stop();  // 배경 음악 멈추기

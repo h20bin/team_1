@@ -13,6 +13,7 @@ public class Player extends Character {
     public int weaponNum = 1;
     private double attackSpeed = 5.0; // 공격 속도 (초당 2발)
     private long lastAttackTime = 0; // 마지막 발사 시간 기록 (밀리초 단위)
+    public boolean[] clearStage = {true,false,false,false,false,false,false,false,false,false};
 
     private boolean invincible;  // 무적 상태
     private long invincibleStartTime;  // 무적 시작 시간

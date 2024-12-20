@@ -12,17 +12,13 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Random;
 
-public class Stage1 extends JPanel implements ActionListener, KeyListener {
+public class StageGamePanel extends JPanel implements ActionListener, KeyListener {
     private GameManager manager;
-    
-    
     private Timer timer;
     private Player player;
     private List<Enemy> enemies;
-    
     private int backgroundY = 0; // 배경 스크롤 위치
     private boolean[] keys = new boolean[256]; // 키 입력 상태 저장
-    
     private Rectangle goal; // 스테이지 클리어 목표
     private boolean goalVisible = false; // 목표의 가시성 여부
     private BufferedImage background; // 배경 이미지
@@ -38,7 +34,7 @@ public class Stage1 extends JPanel implements ActionListener, KeyListener {
     private JButton pauseButton; // 일시정지 버튼
     private JButton mainMenuButton; // 메인 메뉴로 돌아가는 버튼
 
-    public Stage1(GameManager manager, int stageNum) {
+    public StageGamePanel(GameManager manager, int stageNum) {
         this.manager = manager;
         this.player = manager.getPlayer();
         this.enemies = new ArrayList<>();
@@ -149,7 +145,7 @@ public class Stage1 extends JPanel implements ActionListener, KeyListener {
 
         // 배경 이미지 로드
         try {
-            background = ImageIO.read(Paths.get("GameStart/src/background.jpg").toFile());
+            background = ImageIO.read(Paths.get("GameStart/src/background/Stage1.png").toFile());
         } catch (IOException e) {
             e.printStackTrace();
             background = new BufferedImage(1, 1, BufferedImage.TYPE_INT_ARGB);
@@ -216,16 +212,17 @@ public class Stage1 extends JPanel implements ActionListener, KeyListener {
     private void drawBackground(Graphics g) {
         int panelWidth = getWidth();
         int panelHeight = getHeight();
-        int bgHeight = background.getHeight();
+        int bgHeight = background.getHeight(null); // 배경 이미지의 높이 가져오기
 
-        // 배경 이미지의 반복적 그리기
-        g.drawImage(background, 0, backgroundY, panelWidth, panelHeight, this);
-        g.drawImage(background, 0, backgroundY - bgHeight, panelWidth, panelHeight, this);
-
-        // 스크롤 업데이트
-        backgroundY += 1;
+        // 배경 이미지의 현재 y값 기준으로 그리기
+        int startY = backgroundY - bgHeight + 768; // 스크롤 시 이어지도록 위쪽 배경 계산
+       
+        g.drawImage(background, 0, startY, panelWidth, bgHeight, this);
+     
+        // y값을 업데이트하여 스크롤 효과
+        backgroundY += 1; // 스크롤 속도 조정
         if (backgroundY >= bgHeight) {
-            backgroundY = 0;
+            backgroundY = 0; // 배경이 끝까지 스크롤되면 다시 초기화
         }
     }
 

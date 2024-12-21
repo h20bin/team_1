@@ -135,7 +135,7 @@ public class StageGamePanel extends JPanel implements ActionListener, KeyListene
                 g.dispose();
             }
 
-            Weapon enemyWeapon = new Weapon(enemySprite, 3, 5, 2, new BufferedImage[0], 1);
+            Weapon enemyWeapon = new Weapon(null, enemySprite, 3, 5, 2, new BufferedImage[0], 1);
             enemies.add(new Enemy(50 + (i * 40) % 300, -100 - (i * 80), 50, enemySprite, enemyWeapon));
         }
 
@@ -278,55 +278,40 @@ public class StageGamePanel extends JPanel implements ActionListener, KeyListene
     }
 
     private void checkCollisions() {
-        // 적과의 충돌 처리
-        Iterator<Enemy> enemyIterator = enemies.iterator();
-        while (enemyIterator.hasNext()) {
-            Enemy enemy = enemyIterator.next();
-            Rectangle enemyBounds = enemy.getBounds();
-
-            // 플레이어와 적의 충돌 처리
-            if (player.getBounds().intersects(enemyBounds)) {
-                player.takeDamage(10, 0);
-                System.out.println("Player collided with enemy! Player HP: " + player.getCurrentHP());
+        // 적과 플레이어 간 충돌
+        for (Enemy enemy : enemies) {
+            if (player.getBounds().intersects(enemy.getBounds())) {
+                player.takeDamage(10); // 플레이어가 적과 충돌하면 데미지
             }
+        }
 
-            // 적과 총알의 충돌 처리
-            Iterator<Bullet> bulletIterator = player.getWeapon().getBullets().iterator();
-            while (bulletIterator.hasNext()) {
-                Bullet bullet = bulletIterator.next();
-                if (enemyBounds.intersects(bullet.getBounds())) {
-                    // 적에게 데미지를 입히고, 총알 충돌 처리
+        // 플레이어의 총알과 적의 충돌
+        Iterator<Bullet> playerBullets = player.getWeapon().getBullets().iterator();
+        while (playerBullets.hasNext()) {
+            Bullet bullet = playerBullets.next();
+            for (Enemy enemy : enemies) {
+                if (bullet.getBounds().intersects(enemy.getBounds())) {
                     enemy.takeDamage(bullet.getDamage());
-                    bullet.onCollision();
-
-                    // 적의 체력이 0 이하라면 적 제거
-                    if (enemy.getHealth() <= 0) {
-                        enemyIterator.remove();
-                        bullet.render(getGraphics());
-                         
-                        player.addGold(1000);
-                    }
-                    if (bullet.isFinished()) {
-                    	bulletIterator.remove(); // 충돌한 총알 제거
-                    }
-
-                    break; // 한 총알로 한 적만 처리
+                    playerBullets.remove(); // 충돌한 총알 제거
+                    break;
                 }
             }
         }
 
-        // 목표와의 충돌 처리
-        if (goalVisible) {
-            Rectangle goalBounds = new Rectangle(goal.x, goal.y + backgroundY, goal.width, goal.height);
-            if (player.getBounds().intersects(goalBounds)) {
-                JOptionPane.showMessageDialog(this, "Stage Cleared!");
-                player.clearStage[this.stageNum] = true;
-                player.addGold(100);
-                manager.switchPanel(new LobbyPanel(manager));
-                backgroundMusic.stop();  // 배경 음악 멈추기
-                timer.stop();  // 게임 루프 중지
+        // 적의 총알과 플레이어의 충돌
+        for (Enemy enemy : enemies) {
+            Iterator<Bullet> enemyBullets = enemy.getWeapon().getBullets().iterator();
+            while (enemyBullets.hasNext()) {
+                Bullet bullet = enemyBullets.next();
+                if (bullet.getBounds().intersects(player.getBounds())) {
+                    player.takeDamage(bullet.getDamage());
+                    enemyBullets.remove(); // 충돌한 총알 제거
+                    break;
+                }
             }
         }
+
+        
     }
 
 

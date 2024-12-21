@@ -7,8 +7,7 @@ import javax.swing.Timer;
 import javax.swing.SwingUtilities;
 
 public class Boss extends Character {
-	private int MaxHP;
-	private int currentHP;
+
 	public Weapon Hand1;
 	public Weapon Hand2;
 	public Weapon Hand3;
@@ -21,8 +20,8 @@ public class Boss extends Character {
 	
 	Boss() {
 		super(180,100,null,null);
-		this.MaxHP = 1000;
-		this.currentHP = 1000;
+		this.maxHP = 10000;
+		this.currentHP = 10000;
 		
 		try {
 			BufferedImage[] BossSprites = loadSpriteSheet("/Character/boss.png", 128, 128);
@@ -35,10 +34,10 @@ public class Boss extends Character {
 	        BufferedImage[] ball3Frames = loadSpriteSheet("/Weapon/ball3.png", 72, 108);
 	        BufferedImage[] ball4Frames = loadSpriteSheet("/Weapon/ball4.png", 72, 108);
 	        
-	        Weapon hand1 = new Weapon(Hand1Sprites[0], 3, 20, 5, ball1Frames, 4);
-	        Weapon hand2 = new Weapon(Hand2Sprites[0], 3, 20, 5, ball2Frames, 4);
-	        Weapon hand3 = new Weapon(Hand3Sprites[0], 3, 20, 5, ball3Frames, 5);
-	        Weapon hand4 = new Weapon(Hand4Sprites[0], 3, 20, 5, ball4Frames, 5);
+	        Weapon hand1 = new Weapon(this,Hand1Sprites[0], 3, 20, 3, ball1Frames, 4);
+	        Weapon hand2 = new Weapon(this,Hand2Sprites[0], 3, 20, 3, ball2Frames, 4);
+	        Weapon hand3 = new Weapon(this,Hand3Sprites[0], 3, 20, 3, ball3Frames, 5);
+	        Weapon hand4 = new Weapon(this,Hand4Sprites[0], 3, 20, 3, ball4Frames, 5);
 	        
 	        this.Hand1 = hand1;
 	        this.Hand2 = hand2;
@@ -63,7 +62,7 @@ public class Boss extends Character {
 			e.printStackTrace();
 		}
 		// 패턴 타이머 설정 (5초마다 실행)
-        patternTimer = new Timer(5000, e -> usingPattern());
+        patternTimer = new Timer(2000, e -> usingPattern());
         patternTimer.start(); // 타이머 시작
 	}
 	
@@ -174,7 +173,7 @@ public class Boss extends Character {
         this.move(dx, dy);
     }
 
-    private void onDeath() {
+    protected void onDeath() {
         System.out.println("Boss defeated!");
         patternTimer.stop(); // 보스가 죽으면 타이머 중지
     }

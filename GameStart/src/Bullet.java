@@ -12,7 +12,7 @@ public class Bullet {
     private int frameCount = 0;
     private int animationSpeed = 4; // 애니메이션 속도 조정
     private Weapon weapon;
-
+    private Character owner;
     // 상태 관리
     private enum BulletState { NORMAL, IMPACT, EXIT };
     private enum BulletType { wea1, wea2, wea3,ball1,ball2,ball3,ball4};
@@ -26,9 +26,14 @@ public class Bullet {
         this.damage = damage;
         this.frames = frames;
         this.weapon = weapon;
+        this.owner = weapon.getOwner();
         setBulletType();
     }
     
+    public Character getOwner() {
+        return this.weapon.getOwner();
+    }
+
     public void setBulletType() {
     	if (this.weapon.weaponID == 1) {
     		type = BulletType.wea1;
@@ -55,109 +60,50 @@ public class Bullet {
     public void render(Graphics g) {
         if (frames == null || frames.length == 0 || frames[0] == null) {
             System.err.println("Error: frames are not initialized or invalid.");
-            return;
+            return; // frames가 유효하지 않을 경우 렌더링을 건너뜀
         }
 
-        if (type == BulletType.wea1) {
-	        if (state == BulletState.NORMAL) {
-	            // NORMAL 상태의 애니메이션 처리
-	            if (frameCount / animationSpeed < 3) {
-	                currentFrame = (frameCount / animationSpeed) % 3;
-	            } else {
-	                currentFrame = 3;
-	            }
-	        } else if (state == BulletState.IMPACT) {
-	            // IMPACT 상태의 애니메이션 처리 (5~13번 프레임 재생)
-	            currentFrame = 4 + (frameCount / 1);
-	            if (currentFrame >= frames.length - 1) {
-	                // 마지막 프레임까지 재생되면 EXIT 상태로 전환
-	                state = BulletState.EXIT;
-	            }
-	        }
-
-	        // EXIT 상태에서는 아무것도 그리지 않음
-	        if (state != BulletState.EXIT) {
-	            g.drawImage(frames[currentFrame], x, y, null);
-	        }
-	        
-    	}
-    	else if(type == BulletType.wea2) {
-	        if (state == BulletState.NORMAL) {
-	            // NORMAL 상태의 애니메이션 처리
-	            if (frameCount / animationSpeed < 5) {
-	                currentFrame = (frameCount / 1) % 8;
-	            } else {
-	                currentFrame = 8;
-	            }
-	        } else if (state == BulletState.IMPACT) {
-	            // IMPACT 상태의 애니메이션 처리 (5~13번 프레임 재생)
-	            currentFrame = 12 + (frameCount / 1);
-	            if (currentFrame >= frames.length - 1) {
-	                // 마지막 프레임까지 재생되면 EXIT 상태로 전환
-	                state = BulletState.EXIT;
-	            }
-	        }
-    	
-	        // EXIT 상태에서는 아무것도 그리지 않음
-	        if (state != BulletState.EXIT) {
-	            g.drawImage(frames[currentFrame], x, y, null);
-	        }
-    	}
-    	else if(type == BulletType.wea3) {
-	        if (state == BulletState.NORMAL) {
-	            // NORMAL 상태의 애니메이션 처리
-	            if (frameCount / animationSpeed < 6) {
-	                currentFrame = (frameCount / 1) % 12;
-	            } else {
-	                currentFrame = 12;
-	            }
-	        } else if (state == BulletState.IMPACT) {
-	            // IMPACT 상태의 애니메이션 처리 (5~13번 프레임 재생)m
-	        	currentFrame = 15 + (frameCount / 1);
-	            if (currentFrame >= frames.length - 1) {
-	                // 마지막 프레임까지 재생되면 EXIT 상태로 전환
-	                state = BulletState.EXIT;
-	            }
-	        }
-	
-	        // EXIT 상태에서는 아무것도 그리지 않음
-	        if (state != BulletState.EXIT) {
-	            g.drawImage(frames[currentFrame], x, y, null);
-	        }
-    	}
-        else if (type == BulletType.ball1) {
-            // ball 타입은 단일 프레임만 렌더링
-            currentFrame = 0;
-            if (state == BulletState.IMPACT) {
-                state = BulletState.EXIT; // 바로 EXIT로 전환
+        if (state != BulletState.EXIT) { // EXIT 상태가 아닌 경우에만 렌더링
+            if (type == BulletType.wea1) {
+                // wea1 애니메이션 처리
+                if (state == BulletState.NORMAL) {
+                    currentFrame = Math.min((frameCount / animationSpeed) % 3, frames.length - 1);
+                } else if (state == BulletState.IMPACT) {
+                    currentFrame = Math.min(4 + (frameCount / 1), frames.length - 1);
+                    if (currentFrame >= frames.length - 1) {
+                        state = BulletState.EXIT;
+                    }
+                }
+            } else if (type == BulletType.wea2) {
+                // wea2 애니메이션 처리
+                if (state == BulletState.NORMAL) {
+                    currentFrame = Math.min((frameCount / animationSpeed) % 8, frames.length - 1);
+                } else if (state == BulletState.IMPACT) {
+                    currentFrame = Math.min(12 + (frameCount / 1), frames.length - 1);
+                    if (currentFrame >= frames.length - 1) {
+                        state = BulletState.EXIT;
+                    }
+                }
+            } else if (type == BulletType.wea3) {
+                // wea3 애니메이션 처리
+                if (state == BulletState.NORMAL) {
+                    currentFrame = Math.min((frameCount / animationSpeed) % 12, frames.length - 1);
+                } else if (state == BulletState.IMPACT) {
+                    currentFrame = Math.min(15 + (frameCount / 1), frames.length - 1);
+                    if (currentFrame >= frames.length - 1) {
+                        state = BulletState.EXIT;
+                    }
+                }
+            } else if (type == BulletType.ball1 || type == BulletType.ball2 || 
+                       type == BulletType.ball3 || type == BulletType.ball4) {
+                // ball 타입: 단일 프레임 렌더링
+                currentFrame = 0;
+                if (state == BulletState.IMPACT) {
+                    state = BulletState.EXIT;
+                }
             }
-        }
-        else if (type == BulletType.ball2) {
-            // ball 타입은 단일 프레임만 렌더링
-            currentFrame = 0;
-            if (state == BulletState.IMPACT) {
-                state = BulletState.EXIT; // 바로 EXIT로 전환
-            }
-        }
-        else if (type == BulletType.ball3) {
-            // ball 타입은 단일 프레임만 렌더링
-            currentFrame = 0;
-            if (state == BulletState.IMPACT) {
-                state = BulletState.EXIT; // 바로 EXIT로 전환
-            }
-        }
-        else if (type == BulletType.ball4) {
-            // ball 타입은 단일 프레임만 렌더링
-            currentFrame = 0;
-            if (state == BulletState.IMPACT) {
-                state = BulletState.EXIT; // 바로 EXIT로 전환
-            }
-        }
 
-
-
-
-        if (state != BulletState.EXIT) {
+            // 렌더링
             g.drawImage(frames[currentFrame], x, y, null);
         }
 

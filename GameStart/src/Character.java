@@ -4,6 +4,8 @@ import java.awt.image.BufferedImage;
 
 public abstract class Character {
     protected int x, y;
+    protected int currentHP;
+    protected int maxHP;
     protected BufferedImage sprite;
     protected BufferedImage[] wing;
     protected Weapon weapon;
@@ -89,6 +91,10 @@ public abstract class Character {
     public Rectangle getBounds() {
         return generateBounds();
     }
+    protected void onDeath() {
+        System.out.println("Character has died.");
+        // 죽음 처리 로직 추가
+    }
 
     private Rectangle generateBounds() {
         return new Rectangle(x, y, calculateWidth(), calculateHeight());
@@ -100,5 +106,13 @@ public abstract class Character {
 
     private int calculateHeight() {
         return (sprite != null) ? sprite.getHeight() : 0;
+    }
+    
+    public void takeDamage(int damage) {
+        currentHP -= damage;
+        if (currentHP <= 0) {
+            currentHP = 0;
+            onDeath();
+        }
     }
 }

@@ -265,53 +265,60 @@ public class Stage10 extends JPanel implements ActionListener, KeyListener {
     }
 
     private void checkCollisions() {
-        // 적과의 충돌 처리
-        Iterator<Enemy> enemyIterator = enemies.iterator();
-        while (enemyIterator.hasNext()) {
-            Enemy enemy = enemyIterator.next();
-            Rectangle enemyBounds = enemy.getBounds();
-
-            // 플레이어와 적의 충돌 처리
-            if (player.getBounds().intersects(enemyBounds)) {
-                player.takeDamage(10, 0);
-                System.out.println("Player collided with enemy! Player HP: " + player.getCurrentHP());
+        // 적과 플레이어 간 충돌
+        for (Enemy enemy : enemies) {
+            if (player.getBounds().intersects(enemy.getBounds())) {
+                player.takeDamage(10); // 플레이어가 적과 충돌하면 데미지
             }
-            
-            // 보스와의 충돌 처리
-            if (boss != null && player.getBounds().intersects(boss.getBounds())) {
-                player.takeDamage(10, 0);
+        }
+
+        // 플레이어의 총알과 적의 충돌
+        Iterator<Bullet> playerBullets = player.getWeapon().getBullets().iterator();
+        while (playerBullets.hasNext()) {
+            Bullet bullet = playerBullets.next();
+            for (Enemy enemy : enemies) {
+                if (bullet.getBounds().intersects(enemy.getBounds())) {
+                    enemy.takeDamage(bullet.getDamage());
+                    playerBullets.remove(); // 충돌한 총알 제거
+                    break;
+                }
             }
 
-            // 플레이어의 총알과 보스의 충돌 처리
-            Iterator<Bullet> bulletIterator = player.getWeapon().getBullets().iterator();
-            while (bulletIterator.hasNext()) {
-                Bullet bullet = bulletIterator.next();
-                if (boss != null && boss.getBounds().intersects(bullet.getBounds())) {
-                    boss.takeDamage(bullet.getDamage());
-                    bulletIterator.remove(); // 충돌한 총알 제거
-                    System.out.println("Boss hit! Current HP: " + boss.getCurrentHP());
-                    if (boss.getCurrentHP() <= 0) {
-                        JOptionPane.showMessageDialog(this, "Boss Defeated! Stage Cleared!");
-                        manager.switchPanel(new LobbyPanel(manager));
-                        timer.stop();
-                    }
+            // 플레이어 총알과 보스의 충돌
+            if (boss != null && bullet.getBounds().intersects(boss.getBounds())) {
+                boss.takeDamage(bullet.getDamage()); // 보스에게 데미지 적용
+                playerBullets.remove(); // 충돌한 총알 제거
+                break;
+            }
+        }
+
+        // 적의 총알과 플레이어의 충돌
+        for (Enemy enemy : enemies) {
+            Iterator<Bullet> enemyBullets = enemy.getWeapon().getBullets().iterator();
+            while (enemyBullets.hasNext()) {
+                Bullet bullet = enemyBullets.next();
+                if (bullet.getBounds().intersects(player.getBounds())) {
+                    player.takeDamage(bullet.getDamage());
+                    enemyBullets.remove(); // 충돌한 총알 제거
+                    break;
                 }
             }
         }
 
-        // 목표와의 충돌 처리
-        if (goalVisible) {
-            Rectangle goalBounds = new Rectangle(goal.x, goal.y + backgroundY, goal.width, goal.height);
-            if (player.getBounds().intersects(goalBounds)) {
-                JOptionPane.showMessageDialog(this, "Stage Cleared!");
-                player.clearStage[this.stageNum] = true;
-                player.addGold(100);
-                manager.switchPanel(new LobbyPanel(manager));
-                backgroundMusic.stop();  // 배경 음악 멈추기
-                timer.stop();  // 게임 루프 중지
+        // 보스 총알과 플레이어의 충돌
+        if (boss != null) {
+            Iterator<Bullet> bossBullets = boss.Hand1.getBullets().iterator();
+            while (bossBullets.hasNext()) {
+                Bullet bullet = bossBullets.next();
+                if (bullet.getOwner() != player && bullet.getBounds().intersects(player.getBounds())) {
+                    player.takeDamage(bullet.getDamage());
+                    bossBullets.remove(); // 충돌한 총알 제거
+                }
             }
         }
     }
+
+
 
 
     @Override

@@ -127,4 +127,9 @@ public class Enemy extends Character {
     private void assignHealth(int health) {
         this.health = health;
     }
+
+	public Weapon getWeapon() {
+		// TODO Auto-generated method stub
+		return null;
+	}
 }

@@ -6,8 +6,6 @@ import java.io.IOException;
 public class Player extends Character {
     private static Player instance; // 싱글톤 인스턴스
 
-    private int maxHP;
-    private int currentHP;
     private int gold;
     private int speed = 10;
     public int weaponNum = 1;
@@ -21,6 +19,8 @@ public class Player extends Character {
 
     Player() {
         super(0, 0, null, null); // 기본값 설정
+        this.maxHP = 100;
+        this.currentHP = 100;
 
         try {
             // 스프라이트 및 무기 데이터 로드
@@ -29,7 +29,7 @@ public class Player extends Character {
             BufferedImage[] weaponSprites = loadSpriteSheet("/Weapon/weapon-Sheet"+weaponNum+".png", 72, 72);
             BufferedImage[] bulletFrames = loadSpriteSheet("/Weapon/bullet-Sheet"+weaponNum+".png", 6, 4);
 
-            Weapon defaultWeapon = new Weapon(weaponSprites[3], 3, 100, 8, bulletFrames, 1);
+            Weapon defaultWeapon = new Weapon(this,weaponSprites[3], 3, 100, 8, bulletFrames, 1);
 
             // 초기 상태 설정
             this.sprite = playerSprites[0];

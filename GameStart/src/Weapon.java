@@ -13,11 +13,12 @@ public class Weapon {
     private Player player;
     private BufferedImage[] bulletFrames; // 탄환의 프레임
     private Skill skill;
+    private Character owner; // 무기의 소유자
     private int x;
     private int y;
 
     // 매개변수를 받는 생성자
-    public Weapon(BufferedImage sprite, int fireRate, int damage, int bulletSpeed, BufferedImage[] bulletFrames , int weaponID) {
+    public Weapon(Character owner, BufferedImage sprite, int fireRate, int damage, int bulletSpeed, BufferedImage[] bulletFrames , int weaponID) {
         this.sprite = sprite;
         this.fireRate = fireRate;
         this.damage = damage;
@@ -28,11 +29,16 @@ public class Weapon {
 
     // 기본 생성자 추가 (기본값 설정)
     public Weapon() {
+    	this.owner = owner;
         this.sprite = null; // 기본 스프라이트 (null로 설정)
         this.fireRate = 1;  // 기본 발사 속도
         this.damage = 10;   // 기본 데미지
         this.bulletSpeed = 5; // 기본 탄환 속도
         this.bulletFrames = new BufferedImage[1]; // 기본 프레임 배열 (1개 크기)
+    }
+    
+    public Character getOwner() {
+        return owner;
     }
 
     // 탄환 발사 메서드

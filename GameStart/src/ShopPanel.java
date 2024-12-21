@@ -49,7 +49,7 @@ public class ShopPanel extends JPanel {
             Player player = manager.getPlayer();
             if (player.getGold() >= weaponID[0] * 100) {
                 player.addGold(-(weaponID[0] * 100));
-                player.setWeapon(new Weapon(weaponSprites1[3], 3, weaponID[0] * 100, 20, bulletFrames1, 1));
+                player.setWeapon(new Weapon(Player.getInstance(),weaponSprites1[3], 3, weaponID[0] * 100, 20, bulletFrames1, 1));
                 JOptionPane.showMessageDialog(this, "Weapon purchased!");
             } else {
                 JOptionPane.showMessageDialog(this, "Not enough gold!");
@@ -68,7 +68,7 @@ public class ShopPanel extends JPanel {
             Player player = manager.getPlayer();
             if (player.getGold() >= weaponID[1] * 100) {
                 player.addGold(-(weaponID[1] * 100));
-                player.setWeapon(new Weapon(weaponSprites2[3], 3, weaponID[1] * 100, 20, bulletFrames2, 2));
+                player.setWeapon(new Weapon(Player.getInstance(),weaponSprites2[3], 3, weaponID[1] * 100, 20, bulletFrames2, 2));
                 JOptionPane.showMessageDialog(this, "Weapon purchased!");
             } else {
                 JOptionPane.showMessageDialog(this, "Not enough gold!");
@@ -87,7 +87,7 @@ public class ShopPanel extends JPanel {
             Player player = manager.getPlayer();
             if (player.getGold() >= weaponID[2] * 100) {
                 player.addGold(-(weaponID[2] * 100));
-                player.setWeapon(new Weapon(weaponSprites3[3], 3, weaponID[2] * 100, 20, bulletFrames3, 3));
+                player.setWeapon(new Weapon(Player.getInstance(),weaponSprites3[3], 3, weaponID[2] * 100, 20, bulletFrames3, 3));
                 JOptionPane.showMessageDialog(this, "Weapon purchased!");
             } else {
                 JOptionPane.showMessageDialog(this, "Not enough gold!");

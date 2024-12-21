@@ -29,6 +29,15 @@ public class ShopPanel extends JPanel {
 
         BufferedImage[] weaponSprites3 = loadSpriteSheet("/Weapon/weapon-Sheet" + weaponID[2] + ".png", 72, 72);
         BufferedImage[] bulletFrames3 = loadSpriteSheet("/Weapon/bullet-Sheet" + weaponID[2] + ".png", 24, 30);
+        
+        BufferedImage[] weaponSprites4 = loadSpriteSheet("/Weapon/HAND1.png", 128, 128);
+        BufferedImage[] bulletFrames4 = loadSpriteSheet("/Weapon/ball1.png", 72, 108);
+        BufferedImage[] bulletFrames5 = loadSpriteSheet("/Weapon/ball2.png", 72, 108);
+        
+        BufferedImage[] weaponSprites5 = loadSpriteSheet("/Weapon/HAND2.png", 128, 128);
+        BufferedImage[] bulletFrames6 = loadSpriteSheet("/Weapon/ball3.png", 72, 108);
+        BufferedImage[] bulletFrames7 = loadSpriteSheet("/Weapon/ball4.png", 72, 108);
+        
 
         // 무기 버튼 추가
         JButton weaponButton1 = new JButton("Weapon - Cost: " + (weaponID[0]) + " Gold");

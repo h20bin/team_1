@@ -185,7 +185,7 @@ public class Player extends Character {
         long currentTime = System.currentTimeMillis();
         if (currentTime - lastAttackTime >= 1000 / attackSpeed) {
             // 총알 발사
-            weapon.shoot(x, y);
+            weapon.player_shoot(x, y);
             lastAttackTime = currentTime; // 마지막 발사 시간 업데이트
         }
     }

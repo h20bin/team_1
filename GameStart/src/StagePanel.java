@@ -28,7 +28,7 @@ public class StagePanel extends JPanel {
         int yPosition = 100;  // 첫 번째 버튼의 y좌표
 
         // 1부터 10까지의 스테이지 버튼을 생성하고 배치
-        for (int i = 1; i <= 10; i++) { 
+        for (int i = 1; i <= 9; i++) { 
             int stageNum = i;  // 각 스테이지 번호
 
             // 버튼 생성: "Stage " + i로 버튼 라벨 설정
@@ -52,6 +52,15 @@ public class StagePanel extends JPanel {
             // 버튼 간의 간격을 60px로 설정
             yPosition += 50;  // 버튼 간격 설정
         }
+        
+        stageButtons[9] = new JButton("Boss Stage");
+        stageButtons[9].setBounds(0,yPosition+50,500,50);
+        
+        stageButtons[9].addActionListener(e -> {
+        	manager.switchPanel(new Stage10(manager, 10));
+        });
+        
+        add(stageButtons[9]);
 
         // 로비로 돌아가기 버튼 생성
         JButton lobbyButton = new JButton("Go to Lobby");

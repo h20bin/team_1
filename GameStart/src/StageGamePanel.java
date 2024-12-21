@@ -225,9 +225,9 @@ public class StageGamePanel extends JPanel implements ActionListener, KeyListene
             return;
         }else {
         	g.drawImage(background, 0, startY, bgWidth, bgHeight, this);
-
+        	
             backgroundY += scrollSpeed; // 스크롤 속도 조정
-            
+            scrollSpeed =1;
         }
     }
 
@@ -249,7 +249,10 @@ public class StageGamePanel extends JPanel implements ActionListener, KeyListene
         // 키 입력에 따른 플레이어 이동
         if (keys[KeyEvent.VK_A]) player.move(this.playerSpeed2, 0);
         if (keys[KeyEvent.VK_D]) player.move(this.playerSpeed, 0);
-        if (keys[KeyEvent.VK_W]) player.move(0,this.playerSpeed2);
+        if (keys[KeyEvent.VK_W]) {
+        	player.move(0,this.playerSpeed2);
+        	this.scrollSpeed = this.playerSpeed/5;
+        }
         if (keys[KeyEvent.VK_S]) player.move(0,this.playerSpeed);
 
         // 적 이동
@@ -258,7 +261,7 @@ public class StageGamePanel extends JPanel implements ActionListener, KeyListene
         }
 
         // 탄환 업데이트
-        player.getWeapon().updateBullets();
+        player.getWeapon().updateBullets(512, 768);
 
         // 목표 생성 (중복 제거)
         if (enemies.isEmpty()) {

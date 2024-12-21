@@ -10,7 +10,11 @@ public class Weapon {
     private int damage; // 무기의 데미지
     private int bulletSpeed; // 탄환의 속도
     public int weaponID;
+    private Player player;
     private BufferedImage[] bulletFrames; // 탄환의 프레임
+    private Skill skill;
+    private int x;
+    private int y;
 
     // 매개변수를 받는 생성자
     public Weapon(BufferedImage sprite, int fireRate, int damage, int bulletSpeed, BufferedImage[] bulletFrames , int weaponID) {
@@ -32,17 +36,30 @@ public class Weapon {
     }
 
     // 탄환 발사 메서드
-    public void shoot(int weaponX, int weaponY) {
+    public void player_shoot(int weaponX, int weaponY) {
+    	this.x = weaponX;
+    	this.y = weaponY;
         // 무기의 중심 좌표 계산
         int leftBulletX = weaponX + sprite.getWidth() / 4 - bulletFrames[0].getWidth() / 2; // 왼쪽 탄환
         int rightBulletX = weaponX + (3 * sprite.getWidth()) / 4 - bulletFrames[0].getWidth() / 2; // 오른쪽 탄환
         int bulletY = weaponY - bulletFrames[0].getHeight() + 20; // 탄환의 Y 좌표 (무기 상단 바로 위)
 
         // 탄환 두 개 추가 (왼쪽, 오른쪽)
-        bullets.add(new Bullet(leftBulletX, bulletY, bulletSpeed, damage, bulletFrames));
-        bullets.add(new Bullet(rightBulletX, bulletY, bulletSpeed, damage, bulletFrames));
+        bullets.add(new Bullet(leftBulletX, bulletY, bulletSpeed, damage, bulletFrames,Player.getInstance().getWeapon(), 0));
+        bullets.add(new Bullet(rightBulletX, bulletY, bulletSpeed, damage, bulletFrames,Player.getInstance().getWeapon(), 0));
+    }
+    
+    public void boss_shoot(int weaponX, int weaponY, double angle) {
+    	this.x = weaponX;
+    	this.y = weaponY;
+        double radians = Math.toRadians(angle);
+        double dx = bulletSpeed * Math.cos(radians);
+        double dy = bulletSpeed * Math.sin(radians);
+        
+        bullets.add(new Bullet(weaponX, weaponY, dy, damage, bulletFrames, this, dx));
     }
 
+    
     // 무기 및 탄환 렌더링 메서드
     public void render(Graphics g, int x, int y) {
         g.drawImage(sprite, x, y, null); // 무기 이미지 렌더링
@@ -51,15 +68,16 @@ public class Weapon {
         }
     }
 
-    // 탄환 업데이트 메서드
-    public void updateBullets() {
-        // 화면 밖으로 나간 탄환을 리스트에서 제거
-        bullets.removeIf(bullet -> bullet.getY() < 0);
-        // 각 탄환을 이동시키고 업데이트
-        for (Bullet bullet : bullets) {
-            bullet.move();
-        }
+    public void updateBullets(int screenWidth, int screenHeight) {
+        bullets.removeIf(bullet -> 
+            bullet.getY() < 0 || 
+            bullet.getY() > screenHeight || 
+            bullet.getX() < 0 || 
+            bullet.getX() > screenWidth
+        );
+        bullets.forEach(Bullet::move);
     }
+
 
     // 발사된 탄환 리스트 반환
     public List<Bullet> getBullets() {
@@ -117,7 +135,7 @@ public class Weapon {
     // 탄환을 발사하는 메서드 (연속 발사)
     public void shootContinuous(int weaponX, int weaponY) {
         for (int i = 0; i < fireRate; i++) {
-            shoot(weaponX, weaponY); // 연속적으로 발사
+            player_shoot(weaponX, weaponY); // 연속적으로 발사
         }
     }
 

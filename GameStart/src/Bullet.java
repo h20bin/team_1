@@ -14,7 +14,7 @@ public class Bullet {
 
     // 상태 관리
     private enum BulletState { NORMAL, IMPACT, EXIT };
-    private enum BulletType { wea1, wea2, wea3};
+    private enum BulletType { wea1, wea2, wea3,enemy1,enemy2,enemy3,enemy4};
     private BulletState state = BulletState.NORMAL;
     private BulletType type = BulletType.wea1;
     public Bullet(int x, int y, int speed, int damage, BufferedImage[] frames) {
@@ -116,6 +116,59 @@ public class Bullet {
 	            g.drawImage(frames[currentFrame], x, y, null);
 	        }
     	}
+    	else if(type == BulletType.enemy1) {
+	        if (state == BulletState.NORMAL) {
+	            // NORMAL 상태의 애니메이션 처리
+	            if (frameCount / animationSpeed < 1) {
+	                currentFrame = (frameCount / 1) % 1;
+	            } else {
+	                currentFrame = 0;
+	            }
+	        } else if (state == BulletState.IMPACT) {
+                state = BulletState.EXIT;
+	        }
+
+	
+	        // EXIT 상태에서는 아무것도 그리지 않음
+	        if (state != BulletState.EXIT) {
+	            g.drawImage(frames[currentFrame], x, y, null);
+	        }
+    	}
+    	else if(type == BulletType.enemy2) {
+	        if (state == BulletState.NORMAL) {
+	            // NORMAL 상태의 애니메이션 처리
+	            if (frameCount / animationSpeed < 1) {
+	                currentFrame = (frameCount / 1) % 1;
+	            } else {
+	                currentFrame = 0;
+	            }
+	        } else if (state == BulletState.IMPACT) {
+	                state = BulletState.EXIT;
+	        }
+	
+	        // EXIT 상태에서는 아무것도 그리지 않음
+	        if (state != BulletState.EXIT) {
+	            g.drawImage(frames[currentFrame], x, y, null);
+	        }
+    	}
+    	else if(type == BulletType.enemy3) {
+	        if (state == BulletState.NORMAL) {
+	            // NORMAL 상태의 애니메이션 처리
+	            if (frameCount / animationSpeed < 1) {
+	                currentFrame = (frameCount / 1) % 1;
+	            } else {
+	                currentFrame = 0;
+	            }
+	        } else if (state == BulletState.IMPACT) {
+	             state = BulletState.EXIT;
+	        }
+	
+	        // EXIT 상태에서는 아무것도 그리지 않음
+	        if (state != BulletState.EXIT) {
+	            g.drawImage(frames[currentFrame], x, y, null);
+	        }
+    	}
+    	
         frameCount++;
     }
 

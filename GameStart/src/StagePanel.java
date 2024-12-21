@@ -60,13 +60,6 @@ public class StagePanel extends JPanel {
         add(lobbyButton);
     }
 
-    // 스테이지 클리어 후 버튼 상태를 갱신하는 메서드
-    public void updateStageButtons(int completedStage) { 
-        if (player.clearStage[completedStage-1] == true) { 
-            stageButtons[completedStage].setEnabled(true); 
-        }
-    }
-
     @Override 
     protected void paintComponent(Graphics g) { 
         super.paintComponent(g);

@@ -12,7 +12,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Random;
 
-public class StageGamePanel extends JPanel implements ActionListener, KeyListener {
+public class Stage1 extends JPanel implements ActionListener, KeyListener {
     private GameManager manager;
     private Timer timer;
     private Player player;
@@ -26,18 +26,20 @@ public class StageGamePanel extends JPanel implements ActionListener, KeyListene
     private Clip backgroundMusic; // 배경 음악 클립
     private Random random = new Random(); // 랜덤 위치 생성을 위한 Random 객체
     private boolean isShooting;
-    private int stageNum;
+    public int stageNum;
     private BufferedImage starImage;
     private int playerSpeed;
     private int playerSpeed2 = 0;
-
+    private int scrollSpeed = 0;
     private JButton pauseButton; // 일시정지 버튼
     private JButton mainMenuButton; // 메인 메뉴로 돌아가는 버튼
 
-    public StageGamePanel(GameManager manager, int stageNum) {
+    public Stage1(GameManager manager, int stageNum) {
         this.manager = manager;
         this.player = manager.getPlayer();
         this.enemies = new ArrayList<>();
+        this.stageNum = stageNum;
+        this.scrollSpeed = 1;
 
         initializeStage(stageNum);
         loadShootSound(); // 총 소리 로드
@@ -119,11 +121,11 @@ public class StageGamePanel extends JPanel implements ActionListener, KeyListene
 
     private void initializeStage(int stageNum) {
         // 적 생성
-        for (int i = 0; i < stageNum * 5; i++) {
+        for (int i = 0; i < stageNum; i++) {
             BufferedImage enemySprite = null;
             try {
                 // 파일 경로를 통해 리소스를 로드
-                enemySprite = new SpriteSheet("/Character/bora-sheet.png", 36, 36).getFrame(i % 4);
+                enemySprite = new SpriteSheet("/Character/boss.png", 128, 128).getFrame(i % 1);
             } catch (IOException e) {
                 e.printStackTrace();
                 enemySprite = new BufferedImage(40, 40, BufferedImage.TYPE_INT_ARGB);
@@ -220,9 +222,11 @@ public class StageGamePanel extends JPanel implements ActionListener, KeyListene
         g.drawImage(background, 0, startY, panelWidth, bgHeight, this);
      
         // y값을 업데이트하여 스크롤 효과
-        backgroundY += 1; // 스크롤 속도 조정
+        backgroundY += scrollSpeed; // 스크롤 속도 조정
+        
         if (backgroundY >= bgHeight) {
-            backgroundY = 0; // 배경이 끝까지 스크롤되면 다시 초기화
+        	generateGoal();
+            return;
         }
     }
 
@@ -256,8 +260,8 @@ public class StageGamePanel extends JPanel implements ActionListener, KeyListene
         player.getWeapon().updateBullets();
 
         // 목표 생성 (중복 제거)
-        if (enemies.isEmpty() && !goalVisible) {
-            generateGoal();
+        if (enemies.isEmpty()) {
+        	this.scrollSpeed = 100;
         }
     }
 
@@ -295,6 +299,7 @@ public class StageGamePanel extends JPanel implements ActionListener, KeyListene
                     if (enemy.getHealth() <= 0) {
                         enemyIterator.remove();
                         bullet.render(getGraphics());
+                         
                         player.addGold(1000);
                     }
                     if (bullet.isFinished()) {
@@ -311,6 +316,7 @@ public class StageGamePanel extends JPanel implements ActionListener, KeyListene
             Rectangle goalBounds = new Rectangle(goal.x, goal.y + backgroundY, goal.width, goal.height);
             if (player.getBounds().intersects(goalBounds)) {
                 JOptionPane.showMessageDialog(this, "Stage Cleared!");
+                player.clearStage[this.stageNum] = true;
                 player.addGold(100);
                 manager.switchPanel(new LobbyPanel(manager));
                 backgroundMusic.stop();  // 배경 음악 멈추기

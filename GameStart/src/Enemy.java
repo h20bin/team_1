@@ -1,6 +1,7 @@
 import java.awt.Graphics;
 import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
+import java.io.IOException;
 
 public class Enemy extends Character {
     private int health; // 적의 체력
@@ -9,8 +10,22 @@ public class Enemy extends Character {
     public Enemy(int x, int y, int health, BufferedImage sprite, Weapon weapon) {
         super(x, y, sprite, weapon);
         initializeHealth(health);
+        try {
+			BufferedImage[] weaponSprites = loadSpriteSheet("/Weapon/ball1.png",72, 108);
+			BufferedImage[] bulletFrames = loadSpriteSheet("/Weapon/ball1.png",72, 108);
+			
+			this.weapon = new Weapon(this,weaponSprites[0], 3, 25, 8, bulletFrames, 1);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
     }
-
+    
+    // 유틸리티 메서드: 스프라이트 시트를 로드합니다.
+    private BufferedImage[] loadSpriteSheet(String resourcePath, int frameWidth, int frameHeight) throws IOException {
+        return new SpriteSheet(resourcePath, frameWidth, frameHeight).getAllFrames();
+    }
+    
     private void initializeHealth(int health) {
         this.health = health;
     }
@@ -130,6 +145,10 @@ public class Enemy extends Character {
 
 	public Weapon getWeapon() {
 		// TODO Auto-generated method stub
-		return null;
+		return this.weapon;
+	}
+	
+	public void setWeapon(Weapon weapon) {
+		this.weapon = weapon;
 	}
 }

@@ -35,12 +35,12 @@ public class Player extends Character {
             this.sprite = playerSprites[0];
             this.weapon = defaultWeapon;
             this.wing = wingSprites;
-
+            
         } catch (IOException e) {
             e.printStackTrace();
             System.err.println("Failed to load player or weapon assets.");
         }
-
+        
         // 초기 상태 기본값
         reset();
     }
@@ -182,12 +182,17 @@ public class Player extends Character {
     }
     
     public void shoot() {
+    	weapon.settingXY(x,y);
         long currentTime = System.currentTimeMillis();
         if (currentTime - lastAttackTime >= 1000 / attackSpeed) {
             // 총알 발사
-            weapon.player_shoot(x, y);
+            weapon.player_shoot(x,y);
             lastAttackTime = currentTime; // 마지막 발사 시간 업데이트
         }
+    }
+    
+    public void usingSkill() {
+    	
     }
 
     public double getAttackSpeed() {
@@ -259,6 +264,11 @@ public class Player extends Character {
 		// TODO Auto-generated method stub
 		return 0;
 	}
+	
+	protected void onDeath() {
+        System.out.println("Character has died.");
+        System.exit(0);
+    }
 
 	public void setPosition(int i, int j) {
 		// TODO Auto-generated method stub

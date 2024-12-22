@@ -16,6 +16,7 @@ public class Weapon {
     private Character owner; // 무기의 소유자
     private int x;
     private int y;
+    
 
     // 매개변수를 받는 생성자
     public Weapon(Character owner, BufferedImage sprite, int fireRate, int damage, int bulletSpeed, BufferedImage[] bulletFrames , int weaponID) {
@@ -25,11 +26,13 @@ public class Weapon {
         this.bulletSpeed = bulletSpeed;
         this.bulletFrames = bulletFrames;
         this.weaponID = weaponID;
+    	this.owner = owner;
+        
     }
 
     // 기본 생성자 추가 (기본값 설정)
     public Weapon() {
-    	this.owner = owner;
+
         this.sprite = null; // 기본 스프라이트 (null로 설정)
         this.fireRate = 1;  // 기본 발사 속도
         this.damage = 10;   // 기본 데미지
@@ -40,15 +43,18 @@ public class Weapon {
     public Character getOwner() {
         return owner;
     }
-
+    public void settingXY(int WeaponX, int WeaponY) {
+    	this.x = WeaponX;
+    	this.y = WeaponY;
+    }
     // 탄환 발사 메서드
-    public void player_shoot(int weaponX, int weaponY) {
-    	this.x = weaponX;
-    	this.y = weaponY;
+    public void player_shoot(int WeaponX, int WeaponY) {
         // 무기의 중심 좌표 계산
-        int leftBulletX = weaponX + sprite.getWidth() / 4 - bulletFrames[0].getWidth() / 2; // 왼쪽 탄환
-        int rightBulletX = weaponX + (3 * sprite.getWidth()) / 4 - bulletFrames[0].getWidth() / 2; // 오른쪽 탄환
-        int bulletY = weaponY - bulletFrames[0].getHeight() + 20; // 탄환의 Y 좌표 (무기 상단 바로 위)
+    	this.x = WeaponX;
+    	this.y = WeaponY;
+        int leftBulletX = x + sprite.getWidth() / 4 - bulletFrames[0].getWidth() / 2; // 왼쪽 탄환
+        int rightBulletX = x + (3 * sprite.getWidth()) / 4 - bulletFrames[0].getWidth() / 2; // 오른쪽 탄환
+        int bulletY = y - bulletFrames[0].getHeight() + 20; // 탄환의 Y 좌표 (무기 상단 바로 위)
 
         // 탄환 두 개 추가 (왼쪽, 오른쪽)
         bullets.add(new Bullet(leftBulletX, bulletY, bulletSpeed, damage, bulletFrames,Player.getInstance().getWeapon(), 0));
@@ -140,8 +146,9 @@ public class Weapon {
 
     // 탄환을 발사하는 메서드 (연속 발사)
     public void shootContinuous(int weaponX, int weaponY) {
+    	this.settingXY(weaponX, weaponY);
         for (int i = 0; i < fireRate; i++) {
-            player_shoot(weaponX, weaponY); // 연속적으로 발사
+            player_shoot(x,y); // 연속적으로 발사
         }
     }
 
@@ -232,5 +239,12 @@ public class Weapon {
     public void increaseWeaponSpeed(int speedIncrease) {
         fireRate += speedIncrease; // 무기 속도 증가
         System.out.println("Weapon speed increased to " + fireRate);
+    }
+    
+    public int getX() {
+    	return this.x;
+    }
+    public int getY() {
+    	return this.y;
     }
 }

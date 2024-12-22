@@ -118,28 +118,51 @@ public class StageGamePanel extends JPanel implements ActionListener, KeyListene
         // 메인 메뉴로 돌아가기
         manager.switchPanel(new TitlePanel(manager)); // 메인 메뉴로 이동
     }
+    // 유틸리티 메서드: 스프라이트 시트를 로드합니다.
+ // 유틸리티 메서드: 스프라이트 시트를 로드합니다.
+    private BufferedImage[] loadSpriteSheet(String resourcePath, int frameWidth, int frameHeight) throws IOException {
+        // 스프라이트 시트를 로드합니다.
+    	
+        SpriteSheet spriteSheet = new SpriteSheet(resourcePath, frameWidth, frameHeight);
+        if (spriteSheet.getFrameCount() <= 0) {
+            throw new IllegalStateException("No frames available in the sprite sheet.");
+        }
 
+        // 첫 번째 프레임만 배열로 반환합니다.
+        return new BufferedImage[]{spriteSheet.getFrame(0)};
+    }
+
+    
     private void initializeStage(int stageNum) {
-        // 적 생성
+        // 플레이어 초기화 먼저 수행
+        player.reset();
+        BufferedImage weaponSprites;
+        BufferedImage[] bulletFrames;
+        // 적 초기화
         for (int i = 0; i < stageNum; i++) {
-            BufferedImage enemySprite = null;
+            BufferedImage enemySprite;
             try {
-                // 파일 경로를 통해 리소스를 로드
-                enemySprite = new SpriteSheet("/Character/boss.png", 128, 128).getFrame(i % 1);
+                // 적의 스프라이트를 로드
+                enemySprite = new SpriteSheet("/Weapon/ball1.png",72, 108).getFrame(0); // i % 1은 필요 없음
+                weaponSprites = new SpriteSheet("/Weapon/ball1.png",72, 108).getFrame(0); // i % 1은 필요 없음;
+    			bulletFrames = loadSpriteSheet("/Character/bora-Sheet.png", 20, 20);; // i % 1은 필요 없음;
+    			
+    			// 적 생성 및 초기화
+                Enemy enemy = new Enemy(50 + (i * 40) % 300, -100 - (i * 80), 50, enemySprite, null);
+                // 무기를 적에게 설정
+                Weapon enemyWeapon = new Weapon(enemy, weaponSprites, 3, 5, 2, bulletFrames, 6);
+                enemy.setWeapon(enemyWeapon);
+                enemies.add(enemy);
             } catch (IOException e) {
                 e.printStackTrace();
+                // 스프라이트 로드 실패 시 기본 적 이미지 생성
                 enemySprite = new BufferedImage(40, 40, BufferedImage.TYPE_INT_ARGB);
                 Graphics g = enemySprite.getGraphics();
                 g.setColor(Color.RED);
                 g.fillRect(0, 0, 40, 40);
                 g.dispose();
-            }
-
-            Weapon enemyWeapon = new Weapon(null, enemySprite, 3, 5, 2, new BufferedImage[0], 1);
-            enemies.add(new Enemy(50 + (i * 40) % 300, -100 - (i * 80), 50, enemySprite, enemyWeapon));
+            }      
         }
-
-        player.reset();
 
         // 목표 지점 초기화
         goal = new Rectangle(0, 0, 40, 40); // 초기에는 화면 밖에 설정
@@ -153,6 +176,7 @@ public class StageGamePanel extends JPanel implements ActionListener, KeyListene
             background = new BufferedImage(1, 1, BufferedImage.TYPE_INT_ARGB);
         }
     }
+
 
     private void loadShootSound() {
         try {
@@ -285,20 +309,34 @@ public class StageGamePanel extends JPanel implements ActionListener, KeyListene
             }
         }
 
-        // 플레이어의 총알과 적의 충돌
+     // 플레이어의 총알과 적의 충돌
         Iterator<Bullet> playerBullets = player.getWeapon().getBullets().iterator();
         while (playerBullets.hasNext()) {
             Bullet bullet = playerBullets.next();
-            for (Enemy enemy : enemies) {
+
+            // 적을 순회하며 충돌 검사
+            Iterator<Enemy> enemyIterator = enemies.iterator(); // 적의 Iterator 생성
+            while (enemyIterator.hasNext()) {
+                Enemy enemy = enemyIterator.next();
+
                 if (bullet.getBounds().intersects(enemy.getBounds())) {
-                    enemy.takeDamage(bullet.getDamage());
+                    enemy.takeDamage(bullet.getDamage()); // 적 데미지 처리
                     playerBullets.remove(); // 충돌한 총알 제거
-                    break;
+
+                 // 적의 체력이 0 이하라면 적 제거
+                    if (enemy.getHealth() <= 0) {
+                        enemyIterator.remove();
+                        bullet.render(getGraphics());
+                         
+                        player.addGold(1000);
+                    }
+                    break; // 하나의 적과 충돌 후 종료
                 }
             }
         }
 
         // 적의 총알과 플레이어의 충돌
+        
         for (Enemy enemy : enemies) {
             Iterator<Bullet> enemyBullets = enemy.getWeapon().getBullets().iterator();
             while (enemyBullets.hasNext()) {
@@ -310,6 +348,20 @@ public class StageGamePanel extends JPanel implements ActionListener, KeyListene
                 }
             }
         }
+        
+     // 목표와의 충돌 처리
+        if (goalVisible) {
+            Rectangle goalBounds = new Rectangle(goal.x, goal.y + backgroundY, goal.width, goal.height);
+            if (player.getBounds().intersects(goalBounds)) {
+                JOptionPane.showMessageDialog(this, "Stage Cleared!");
+                player.clearStage[this.stageNum] = true;
+                player.addGold(100);
+                manager.switchPanel(new LobbyPanel(manager));
+                backgroundMusic.stop();  // 배경 음악 멈추기
+                timer.stop();  // 게임 루프 중지
+            }
+        }
+
 
         
     }

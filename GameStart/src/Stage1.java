@@ -12,11 +12,10 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Random;
 
-public class Stage10 extends JPanel implements ActionListener, KeyListener {
+public class Stage1 extends JPanel implements ActionListener, KeyListener {
     private GameManager manager;
     private Timer timer;
     private Player player;
-    private Boss boss; // 보스 객체 추가
     private List<Enemy> enemies;
     private int backgroundY = 768; // 배경 스크롤 위치
     private boolean[] keys = new boolean[256]; // 키 입력 상태 저장
@@ -34,9 +33,8 @@ public class Stage10 extends JPanel implements ActionListener, KeyListener {
     private int scrollSpeed = 0;
     private JButton pauseButton; // 일시정지 버튼
     private JButton mainMenuButton; // 메인 메뉴로 돌아가는 버튼
-    private Timer bossPatternTimer; // 보스 패턴 타이머
 
-    public Stage10(GameManager manager, int stageNum) {
+    public Stage1 (GameManager manager, int stageNum) {
         this.manager = manager;
         this.player = manager.getPlayer();
         this.enemies = new ArrayList<>();
@@ -67,14 +65,7 @@ public class Stage10 extends JPanel implements ActionListener, KeyListener {
         // 게임 루프 시작
         timer = new Timer(16, this);
         timer.start();
-        
-     // 보스 패턴 타이머 (5초마다 패턴 실행)
-        bossPatternTimer = new Timer(5000, e -> {
-            if (boss != null) {
-                boss.usingPattern();
-            }
-        });
-        
+
         // 키 입력 처리 활성화
         setFocusable(true);
         SwingUtilities.invokeLater(() -> requestFocusInWindow());
@@ -127,13 +118,62 @@ public class Stage10 extends JPanel implements ActionListener, KeyListener {
         // 메인 메뉴로 돌아가기
         manager.switchPanel(new TitlePanel(manager)); // 메인 메뉴로 이동
     }
+    // 유틸리티 메서드: 스프라이트 시트를 로드합니다.
+ // 유틸리티 메서드: 스프라이트 시트를 로드합니다.
+    private BufferedImage[] loadSpriteSheet(String resourcePath, int frameWidth, int frameHeight) throws IOException {
+        // 스프라이트 시트를 로드합니다.
+    	
+        SpriteSheet spriteSheet = new SpriteSheet(resourcePath, frameWidth, frameHeight);
+        if (spriteSheet.getFrameCount() <= 0) {
+            throw new IllegalStateException("No frames available in the sprite sheet.");
+        }
 
+        // 첫 번째 프레임만 배열로 반환합니다.
+        return new BufferedImage[]{spriteSheet.getFrame(0)};
+    }
+
+    
     private void initializeStage(int stageNum) {
-    	// 보스 생성
-        boss = new Boss();
-
-
+        // 플레이어 초기화 먼저 수행
         player.reset();
+        BufferedImage weaponSprites;
+        BufferedImage[] bulletFrames;
+
+        try {
+            weaponSprites = new SpriteSheet("/Weapon/ball1.png", 72, 108).getFrame(0);
+            bulletFrames = loadSpriteSheet("/Character/bora-Sheet.png", 20, 20);
+        } catch (IOException e) {
+            e.printStackTrace();
+            return; // 리소스를 로드하지 못하면 초기화 종료
+        }
+
+        // 적 초기화
+        for (int i = 0; i < stageNum*5; i++) {
+            BufferedImage enemySprite;
+            try {
+                enemySprite = new SpriteSheet("/Weapon/ball1.png", 72, 108).getFrame(0);
+            } catch (IOException e) {
+                e.printStackTrace();
+                enemySprite = new BufferedImage(40, 40, BufferedImage.TYPE_INT_ARGB);
+                Graphics g = enemySprite.getGraphics();
+                g.setColor(Color.RED);
+                g.fillRect(0, 0, 40, 40);
+                g.dispose();
+            }
+
+            // 패턴에 따라 적의 위치와 무기 설정
+            Enemy enemy;
+	
+	        int randomX = random.nextInt(512 - 40); // 화면 너비 내에서 랜덤 X
+	        int randomY = random.nextInt(200) - 300; // 화면 상단 위쪽에서 랜덤 Y
+	        enemy = new Enemy(randomX, randomY, 50, enemySprite, null);
+
+
+            // 무기를 적에게 설정
+            Weapon enemyWeapon = new Weapon(enemy, weaponSprites, 3, 5, 2, bulletFrames, 6);
+            enemy.setWeapon(enemyWeapon);
+            enemies.add(enemy);
+        }
 
         // 목표 지점 초기화
         goal = new Rectangle(0, 0, 40, 40); // 초기에는 화면 밖에 설정
@@ -147,6 +187,8 @@ public class Stage10 extends JPanel implements ActionListener, KeyListener {
             background = new BufferedImage(1, 1, BufferedImage.TYPE_INT_ARGB);
         }
     }
+
+
 
     private void loadShootSound() {
         try {
@@ -184,10 +226,10 @@ public class Stage10 extends JPanel implements ActionListener, KeyListener {
 
         // 배경 그리기
         drawBackground(g);
-        
-        // 보스 렌더링
-        if (boss != null) {
-            boss.render(g);
+
+        // 적 렌더링
+        for (Enemy enemy : enemies) {
+            enemy.render(g);
         }
 
         // 플레이어 렌더링
@@ -206,14 +248,14 @@ public class Stage10 extends JPanel implements ActionListener, KeyListener {
     }
 
     private void drawBackground(Graphics g) {
-        int panelWidth = getWidth();
-        int panelHeight = getHeight();
-        int bgHeight = background.getHeight(null);
         int bgWidth = background.getWidth(null);
+        int bgHeight = background.getHeight(null); // 배경 이미지의 높이 가져오기
 
-        int startY = backgroundY - bgHeight;
+        // 배경 이미지의 현재 y값 기준으로 그리기
+        int startY = backgroundY - bgHeight; // 스크롤 시 이어지도록 위쪽 배경 계산
+       
         
-        if (backgroundY >= 3000 && boss == null) {
+        if (backgroundY >= 3000) {
         	g.drawImage(background, 0, 0, bgWidth,bgHeight, this);
         	generateGoal();
             return;
@@ -221,52 +263,50 @@ public class Stage10 extends JPanel implements ActionListener, KeyListener {
         	g.drawImage(background, 0, startY, bgWidth, bgHeight, this);
         	
             backgroundY += scrollSpeed; // 스크롤 속도 조정
-            scrollSpeed = 1;
+            scrollSpeed =5;
         }
     }
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        updateGame();       // 게임 업데이트
-        checkCollisions();  // 충돌 처리
-        
+        updateGame();
+        checkCollisions();
+
         // 자동 발사 로직
         if (isShooting) {
             player.shoot();
             playShootSound();
         }
 
-        repaint(); // 화면 갱신
+        repaint();
     }
-
 
     private void updateGame() {
         // 키 입력에 따른 플레이어 이동
         if (keys[KeyEvent.VK_A]) player.move(this.playerSpeed2, 0);
         if (keys[KeyEvent.VK_D]) player.move(this.playerSpeed, 0);
-        if (keys[KeyEvent.VK_W]) player.move(0,this.playerSpeed2);
+        if (keys[KeyEvent.VK_W]) {
+        	player.move(0,this.playerSpeed2);
+        	this.scrollSpeed = this.playerSpeed/5;
+        }
         if (keys[KeyEvent.VK_S]) player.move(0,this.playerSpeed);
 
-        // 탄환 업데이트
-        player.getWeapon().updateBullets(512,768);
-
-        // 보스 이동 및 패턴 실행
-        if (boss != null) {
-            boss.Hand1.updateBullets(getWidth(), getHeight());
-            boss.Hand2.updateBullets(getWidth(), getHeight());
-            boss.Hand3.updateBullets(getWidth(), getHeight());
-            boss.Hand4.updateBullets(getWidth(), getHeight());
+        // 적 이동
+        for (Enemy enemy : enemies) {
+            enemy.move(0, 20);
         }
-        
-     // 목표 생성 (중복 제거)
-        if (boss == null) {
+
+        // 탄환 업데이트
+        player.getWeapon().updateBullets(512, 768);
+
+        // 목표 생성 (중복 제거)
+        if (enemies.isEmpty()) {
         	this.scrollSpeed = 20;
         }
-
     }
 
     private void generateGoal() {
-    	// 목표를 화면 내 무작위 위치에 생성
+        // 목표를 화면 내 무작위 위치에 생성
         int randomX = 240;
         int randomY = 40;
         goal.setLocation(randomX, randomY - backgroundY);
@@ -281,36 +321,34 @@ public class Stage10 extends JPanel implements ActionListener, KeyListener {
             }
         }
 
-        // 플레이어의 총알과 적의 충돌
+     // 플레이어의 총알과 적의 충돌
         Iterator<Bullet> playerBullets = player.getWeapon().getBullets().iterator();
         while (playerBullets.hasNext()) {
             Bullet bullet = playerBullets.next();
-            for (Iterator<Enemy> enemyIterator = enemies.iterator(); enemyIterator.hasNext();) {
-                Enemy enemy = enemyIterator.next();
-                if (bullet.getBounds().intersects(enemy.getBounds())) {
-                    enemy.takeDamage(bullet.getDamage());
-                    playerBullets.remove(); // 충돌한 총알 제거
-                    if (enemy.getHealth() <= 0) {
-                        enemyIterator.remove(); // 적 제거
-                    }
-                    break;
-                }
-            }
 
-            // 플레이어 총알과 보스의 충돌
-            if (boss != null && bullet.getBounds().intersects(boss.getBounds())) {
-                boss.takeDamage(bullet.getDamage()); // 보스에게 데미지 적용
-                playerBullets.remove(); // 충돌한 총알 제거
-                if (boss.getCurrentHP() <= 0) {
-                    boss = null; // 보스를 제거
-                    System.out.println("Boss defeated!");
+            // 적을 순회하며 충돌 검사
+            Iterator<Enemy> enemyIterator = enemies.iterator(); // 적의 Iterator 생성
+            while (enemyIterator.hasNext()) {
+                Enemy enemy = enemyIterator.next();
+
+                if (bullet.getBounds().intersects(enemy.getBounds())) {
+                    enemy.takeDamage(bullet.getDamage()); // 적 데미지 처리
+                    playerBullets.remove(); // 충돌한 총알 제거
+
+                 // 적의 체력이 0 이하라면 적 제거
+                    if (enemy.getHealth() <= 0) {
+                        enemyIterator.remove();
+                        bullet.render(getGraphics());
+                         
+                        player.addGold(10);
+                    }
+                    break; // 하나의 적과 충돌 후 종료
                 }
-                break;
             }
         }
 
-
         // 적의 총알과 플레이어의 충돌
+        
         for (Enemy enemy : enemies) {
             Iterator<Bullet> enemyBullets = enemy.getWeapon().getBullets().iterator();
             while (enemyBullets.hasNext()) {
@@ -322,40 +360,23 @@ public class Stage10 extends JPanel implements ActionListener, KeyListener {
                 }
             }
         }
-
-     // 보스 총알과 플레이어의 충돌
-        if (boss != null) {
-            // 보스의 무기들을 리스트에 저장
-            List<Weapon> bossWeapons = List.of(boss.Hand1, boss.Hand2, boss.Hand3, boss.Hand4);
-            // 각 무기의 총알을 처리
-            for (Weapon weapon : bossWeapons) {
-                Iterator<Bullet> bossBullets = weapon.getBullets().iterator();
-                while (bossBullets.hasNext()) {
-                    Bullet bullet = bossBullets.next();
-
-                    // 플레이어와 충돌 검사
-                    if (bullet.getOwner() != player && bullet.getBounds().intersects(player.getBounds())) {
-                        player.takeDamage(bullet.getDamage()); // 플레이어에게 데미지 적용
-                        bossBullets.remove(); // 충돌한 총알 제거
-                    }
-                }
-            }
-        }
         
-        // 목표와의 충돌 처리
+     // 목표와의 충돌 처리
         if (goalVisible) {
             Rectangle goalBounds = new Rectangle(goal.x, goal.y + backgroundY, goal.width, goal.height);
             if (player.getBounds().intersects(goalBounds)) {
                 JOptionPane.showMessageDialog(this, "Stage Cleared!");
+                player.clearStage[this.stageNum] = true;
                 player.addGold(100);
                 manager.switchPanel(new LobbyPanel(manager));
                 backgroundMusic.stop();  // 배경 음악 멈추기
                 timer.stop();  // 게임 루프 중지
             }
         }
+
+
+        
     }
-
-
 
 
     @Override

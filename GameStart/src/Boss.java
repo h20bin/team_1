@@ -20,8 +20,8 @@ public class Boss extends Character {
 	
 	Boss() {
 		super(180,100,null,null);
-		this.maxHP = 10000;
-		this.currentHP = 10000;
+		this.maxHP = 100000;
+		this.currentHP = 100000;
 		
 		try {
 			BufferedImage[] BossSprites = loadSpriteSheet("/Character/boss.png", 128, 128);

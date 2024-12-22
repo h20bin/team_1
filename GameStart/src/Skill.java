@@ -17,7 +17,7 @@ public class Skill {
     public void pattern1() {
         int centerX = 100; // 무기 소유자의 X 좌표
         int centerY = 50; // 무기 소유자의 Y 좌표
-        int speed = 20;
+        int speed = weapon.getBulletSpeed();
 
         for (int i = 0; i < 8; i++) {
             double angle = Math.toRadians(i * 45);
@@ -33,7 +33,7 @@ public class Skill {
     public void pattern2() {
         int centerX = 150;
         int centerY = 120;
-        int speed = 15;
+        int speed = weapon.getBulletSpeed();
 
         for (int i = 0; i < 12; i++) {
             double angle = Math.toRadians(i * 30);
@@ -49,8 +49,8 @@ public class Skill {
     public void pattern3() {
         int centerX = 300;
         int centerY = 120;
-        int speed = 10;
-
+        int speed = weapon.getBulletSpeed();
+        
         for (int i = 0; i < 20; i++) {
             double angle = Math.toRadians(i * 18);
             double dx = Math.cos(angle) * speed;
@@ -65,7 +65,7 @@ public class Skill {
     public void pattern4() {
         int centerX = 350;
         int centerY = 50;
-        int speed = 20;
+        int speed = weapon.getBulletSpeed();
 
         for (int i = -3; i <= 3; i++) {
             double angle = Math.toRadians(i * 20);
@@ -75,7 +75,49 @@ public class Skill {
             weapon.getBullets().add(new Bullet(centerX, centerY, dy, 25, weapon.getBulletFrames(), weapon, dx));
         }
     }
+    
+    public void skill_wea1() {
+    	int centerX = this.weapon.getX();
+    	int centerY = this.weapon.getY();
+    	int speed = weapon.getBulletSpeed();
+    	
+    	for (int i = -3; i <= 3; i++) {
+            double angle = Math.toRadians(i * 20);
+            double dx = Math.cos(angle) * speed;
+            double dy = Math.sin(angle) * speed;
 
+            weapon.getBullets().add(new Bullet(centerX, centerY, dy, 25, weapon.getBulletFrames(), weapon, dx));
+        }
+    }
+    
+    public void skill_wea2() {
+    	int centerX = this.weapon.getX();
+    	int centerY = this.weapon.getY();
+    	int speed = weapon.getBulletSpeed();
+    	
+    	for (int i = -3; i <= 3; i++) {
+            double angle = Math.toRadians(i * 20);
+            double dx = Math.cos(angle) * speed;
+            double dy = Math.sin(angle) * speed;
+
+            weapon.getBullets().add(new Bullet(centerX, centerY, dy, 25, weapon.getBulletFrames(), weapon, dx));
+        }
+    }
+    
+    public void skill_wea3() {
+    	int centerX = this.weapon.getX();
+    	int centerY = this.weapon.getY();
+    	int speed = weapon.getBulletSpeed();
+    	
+    	for (int i = -3; i <= 3; i++) {
+            double angle = Math.toRadians(i * 20);
+            double dx = Math.cos(angle) * speed;
+            double dy = Math.sin(angle) * speed;
+
+            weapon.getBullets().add(new Bullet(centerX, centerY, dy, 25, weapon.getBulletFrames(), weapon, dx));
+        }
+    }
+    
     public void shooting() {
         switch (this.skilltype) {
             case 1 -> {
@@ -85,6 +127,11 @@ public class Skill {
             case 2 -> {
                 if (this.weaponID == 4) pattern2();
                 if (this.weaponID == 5) pattern4();
+            }
+            case 3 -> {
+            	if (this.weaponID == 1) skill_wea1();
+            	if (this.weaponID == 2) skill_wea2();
+            	if (this.weaponID == 3) skill_wea3();
             }
         }
     }

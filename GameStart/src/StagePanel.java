@@ -27,41 +27,112 @@ public class StagePanel extends JPanel {
         // 스테이지 버튼들을 화면에 배치할 y좌표 시작값
         int yPosition = 100;  // 첫 번째 버튼의 y좌표
 
-        // 1부터 10까지의 스테이지 버튼을 생성하고 배치
-        for (int i = 1; i <= 9; i++) { 
-            int stageNum = i;  // 각 스테이지 번호
-
-            // 버튼 생성: "Stage " + i로 버튼 라벨 설정
-            stageButtons[i - 1] = new JButton("Stage " + stageNum);
-            stageButtons[i - 1].setBounds(0, yPosition, 500, 50);  // 버튼 위치와 크기 설정
-
-            // 버튼 클릭 시 실행할 동작 설정
-            stageButtons[i - 1].addActionListener(e -> { 
-                manager.switchPanel(new StageGamePanel(manager, stageNum));  // 스테이지 게임으로 전환
-            });
-
-            if (player.clearStage[i-1] == true) { 
-                stageButtons[i - 1].setEnabled(true);  // 첫 번째 스테이지는 활성화
-            } else { 
-                stageButtons[i - 1].setEnabled(false);  // 나머지 스테이지는 비활성화
-            }
-
-            // 생성한 버튼을 패널에 추가
-            add(stageButtons[i - 1]);
-
-            // 버튼 간의 간격을 60px로 설정
-            yPosition += 50;  // 버튼 간격 설정
-        }
+        stageButtons[0] = new JButton("1 Stage");
+        stageButtons[0].setBounds(0,yPosition,500,50);
+        
+        stageButtons[0].addActionListener(e -> {
+        	manager.switchPanel(new Stage1(manager, 1));
+        });
+        
+        add(stageButtons[0]);
+        yPosition += 50;
+        
+        stageButtons[1] = new JButton("2 Stage");
+        stageButtons[1].setBounds(0,yPosition,500,50);
+        
+        stageButtons[1].addActionListener(e -> {
+        	manager.switchPanel(new Stage2(manager, 2));
+        });
+        
+        add(stageButtons[1]);
+        yPosition += 50;
+        
+        stageButtons[2] = new JButton("3 Stage");
+        stageButtons[2].setBounds(0,yPosition,500,50);
+        
+        stageButtons[2].addActionListener(e -> {
+        	manager.switchPanel(new Stage3(manager, 3));
+        });
+        
+        add(stageButtons[2]);
+        yPosition += 50;
+        
+        stageButtons[3] = new JButton("4 Stage");
+        stageButtons[3].setBounds(0,yPosition,500,50);
+        
+        stageButtons[3].addActionListener(e -> {
+        	manager.switchPanel(new Stage4(manager, 4));
+        });
+        
+        add(stageButtons[3]);
+        yPosition += 50;
+        
+        stageButtons[4] = new JButton("5 Stage");
+        stageButtons[4].setBounds(0,yPosition,500,50);
+        
+        stageButtons[4].addActionListener(e -> {
+        	manager.switchPanel(new Stage5(manager, 5));
+        });
+        
+        add(stageButtons[4]);
+        yPosition += 50;
+        
+        stageButtons[5] = new JButton("6 Stage");
+        stageButtons[5].setBounds(0,yPosition,500,50);
+        
+        stageButtons[5].addActionListener(e -> {
+        	manager.switchPanel(new Stage6(manager, 6));
+        });
+        
+        add(stageButtons[5]);
+        yPosition += 50;
+        
+        stageButtons[6] = new JButton("7 Stage");
+        stageButtons[6].setBounds(0,yPosition,500,50);
+        
+        stageButtons[6].addActionListener(e -> {
+        	manager.switchPanel(new Stage7(manager, 7));
+        });
+        
+        add(stageButtons[6]);
+        yPosition += 50;
+        
+        stageButtons[7] = new JButton("8 Stage");
+        stageButtons[7].setBounds(0,yPosition,500,50);
+        
+        stageButtons[7].addActionListener(e -> {
+        	manager.switchPanel(new Stage8(manager, 8));
+        });
+        
+        add(stageButtons[7]);
+        yPosition += 50;
+        
+        stageButtons[8] = new JButton("9 Stage");
+        stageButtons[8].setBounds(0,yPosition,500,50);
+        
+        stageButtons[8].addActionListener(e -> {
+        	manager.switchPanel(new Stage9(manager, 9));
+        });
+        
+        add(stageButtons[8]);
+        yPosition += 50;
         
         stageButtons[9] = new JButton("Boss Stage");
-        stageButtons[9].setBounds(0,yPosition+50,500,50);
+        stageButtons[9].setBounds(0,yPosition,500,50);
         
         stageButtons[9].addActionListener(e -> {
         	manager.switchPanel(new Stage10(manager, 10));
         });
         
         add(stageButtons[9]);
-
+        
+        for (int i = 1; i <= 10; i++) { 
+	        if (player.clearStage[i-1] == true) { 
+	            stageButtons[i - 1].setEnabled(true);  // 첫 번째 스테이지는 활성화
+	        } else { 
+	            stageButtons[i - 1].setEnabled(false);  // 나머지 스테이지는 비활성화
+	        }
+        }
         // 로비로 돌아가기 버튼 생성
         JButton lobbyButton = new JButton("Go to Lobby");
         lobbyButton.setBounds(400, 0, 100, 50);  // 버튼 위치를 조정 (여기서는 yPosition에 맞춰 설정)

@@ -67,7 +67,7 @@ public class Bullet {
             if (type == BulletType.wea1) {
                 // wea1 애니메이션 처리
                 if (state == BulletState.NORMAL) {
-                    currentFrame = Math.min((frameCount / animationSpeed) % 3, frames.length - 1);
+                    currentFrame = Math.min(2+(frameCount / animationSpeed) % 4, frames.length - 1);
                 } else if (state == BulletState.IMPACT) {
                     currentFrame = Math.min(4 + (frameCount / 1), frames.length - 1);
                     if (currentFrame >= frames.length - 1) {
@@ -77,7 +77,7 @@ public class Bullet {
             } else if (type == BulletType.wea2) {
                 // wea2 애니메이션 처리
                 if (state == BulletState.NORMAL) {
-                    currentFrame = Math.min((frameCount / animationSpeed) % 8, frames.length - 1);
+                    currentFrame = Math.min(4+(frameCount / animationSpeed) % 8, frames.length - 1);
                 } else if (state == BulletState.IMPACT) {
                     currentFrame = Math.min(12 + (frameCount / 1), frames.length - 1);
                     if (currentFrame >= frames.length - 1) {
@@ -87,7 +87,7 @@ public class Bullet {
             } else if (type == BulletType.wea3) {
                 // wea3 애니메이션 처리
                 if (state == BulletState.NORMAL) {
-                    currentFrame = Math.min((frameCount / animationSpeed) % 12, frames.length - 1);
+                    currentFrame = Math.min(4+(frameCount / animationSpeed) % 12, frames.length - 1);
                 } else if (state == BulletState.IMPACT) {
                     currentFrame = Math.min(15 + (frameCount / 1), frames.length - 1);
                     if (currentFrame >= frames.length - 1) {
@@ -148,16 +148,16 @@ public class Bullet {
         	return new Rectangle(x, y, 14, 8); // 기존 충돌 영역
         }
         else if (type == BulletType.ball1 ) {
-        	return new Rectangle(x+12, y-54, 48, 48); // 기존 충돌 영역
+        	return new Rectangle(x, y, 72, 108); // 기존 충돌 영역
         }
         else if (type == BulletType.ball2 ) {
-        	return new Rectangle(x+12, y-54, 48, 48); // 기존 충돌 영역
+        	return new Rectangle(x, y, 72, 108); // 기존 충돌 영역
         }
         else if (type == BulletType.ball3 ) {
-        	return new Rectangle(x+12, y-54, 48, 48); // 기존 충돌 영역
+        	return new Rectangle(x, y, 72, 108); // 기존 충돌 영역
         }
         else if (type == BulletType.ball4 ) {
-        	return new Rectangle(x+12, y-54, 48, 48); // 기존 충돌 영역
+        	return new Rectangle(x, y, 72, 108); // 기존 충돌 영역
         }else
         	return new Rectangle(0,0,0,0);
     }

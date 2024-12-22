@@ -1,3 +1,4 @@
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
@@ -169,21 +170,26 @@ public class Stage2 extends JPanel implements ActionListener, KeyListener {
                 g.dispose();
             }
 
-            // 패턴에 따라 적의 위치와 무기 설정
+         // 패턴에 따라 적의 위치와 무기 설정
             Enemy enemy;
-            switch (i % 2) {
+            switch (i % 3) {
                 case 0: // 직선 배열
-                    enemy = new Enemy(50 + (i * 40), -100, 50, enemySprite1, null);
+                    int xPos = 50 + (i * 40);
+                    int yPos = -100 - (stageNum * 10); // 스테이지가 높아질수록 시작 위치 조정
+                    enemy = new Enemy(xPos, yPos, 50 + stageNum * 5, enemySprite1, null); // 적 체력 증가
                     break;
 
                 case 1: // 지그재그 배열
-                    enemy = new Enemy(50 + (i % 2 == 0 ? i * 40 : -i * 40), -100 - (i * 80), 50, enemySprite2, null);
+                    int zigzagX = 50 + (i % 2 == 0 ? i * 40 : -i * 40);
+                    int zigzagY = -100 - (i * 80);
+                    zigzagY -= stageNum * 10; // 난이도에 따른 초기 Y 위치 하향
+                    enemy = new Enemy(zigzagX, zigzagY, 60 + stageNum * 5, enemySprite2, null); // 적 체력 증가
                     break;
 
                 default: // 랜덤 위치
                     int randomX = random.nextInt(512 - 40); // 화면 너비 내에서 랜덤 X
-                    int randomY = random.nextInt(200) - 300; // 화면 상단 위쪽에서 랜덤 Y
-                    enemy = new Enemy(randomX, randomY, 50, enemySprite3, null);
+                    int randomY = random.nextInt(200) - 300 - (stageNum * 20); // 스테이지에 따른 랜덤 Y 위치 증가
+                    enemy = new Enemy(randomX, randomY, 70 + stageNum * 5, enemySprite3, null); // 적 체력 증가
                     break;
             }
 
@@ -390,12 +396,8 @@ public class Stage2 extends JPanel implements ActionListener, KeyListener {
                 backgroundMusic.stop();  // 배경 음악 멈추기
                 timer.stop();  // 게임 루프 중지
             }
-        }
-
-
-        
+        }  
     }
-
 
     @Override
     public void keyPressed(KeyEvent e) {

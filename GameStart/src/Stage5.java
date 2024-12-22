@@ -169,28 +169,31 @@ public class Stage5 extends JPanel implements ActionListener, KeyListener {
             Enemy enemy;
             switch (i % 2) {
                 case 0: // 직선 배열
-                    enemy = new Enemy(50 + (i * 40), -100, 50, enemySprite1, null);
+                    // 직선 배열에서 간격을 좁히고 적의 체력을 증가
+                    enemy = new Enemy(50 + (i * 20), -100, 50 + stageNum * 10, enemySprite1, null);
                     break;
 
-
                 case 1: // 원형 배열
-                    double angle = 2 * Math.PI / stageNum * i; // 각도 계산
-                    int centerX = 256; // 원의 중심
+                    // 원형 배열에서 적들이 더 촘촘하게 배치되고 체력이 증가
+                    double angle = 2 * Math.PI / (stageNum + 2) * i; // 각도 계산 (적들이 더 많이 배치됨)
+                    int centerX = 256;
                     int centerY = -300;
-                    int radius = 100; // 원의 반지름
+                    int radius = 80; // 반지름 줄이기
                     int x = (int) (centerX + radius * Math.cos(angle));
                     int y = (int) (centerY + radius * Math.sin(angle));
-                    enemy = new Enemy(x, y, 50, enemySprite2, null);
+                    enemy = new Enemy(x, y, 50 + stageNum * 10, enemySprite2, null);
                     break;
 
                 default: // 기본: 직선 배열
-                    enemy = new Enemy(50 + (i * 40), -100, 50, enemySprite2, null);
+                    // 기본 배열도 난이도에 맞게 체력 증가
+                    enemy = new Enemy(50 + (i * 20), -100, 50 + stageNum * 10, enemySprite2, null);
             }
 
-            // 무기를 적에게 설정
-            Weapon enemyWeapon = new Weapon(enemy, weaponSprites1, 3, 5, 2, bulletFrames, 6);
+             // 무기 강화 (적의 공격력과 속도 증가)
+            Weapon enemyWeapon = new Weapon(enemy, weaponSprites1, 3 + stageNum * 2, 5 + stageNum * 2, 2, bulletFrames, 6);
             enemy.setWeapon(enemyWeapon);
             enemies.add(enemy);
+
         }
 
         // 목표 지점 초기화

@@ -177,37 +177,42 @@ public class Stage9 extends JPanel implements ActionListener, KeyListener {
             Enemy enemy;
             switch (i % 4) {
                 case 0: // 직선 배열
-                    enemy = new Enemy(50 + (i * 40), -100, 50, enemySprite1, null);
+                    // 직선 배열의 간격을 더 좁히고, 체력과 이동 속도 증가
+                    enemy = new Enemy(50 + (i * 15), -100, 50 + stageNum * 40, enemySprite1, null);
                     break;
 
                 case 1: // 지그재그 배열
-                    enemy = new Enemy(50 + (i % 2 == 0 ? i * 40 : -i * 40), -100 - (i * 80), 50, enemySprite2, null);
+                    // 지그재그 배열의 간격을 더 좁히고, 적의 체력을 강화하며 이동 경로를 복잡하게 설정
+                    enemy = new Enemy(50 + (i % 2 == 0 ? i * 15 : -i * 15), -100 - (i * 40), 50 + stageNum * 40, enemySprite2, null);
                     break;
 
                 case 2: // 원형 배열
-                    double angle = 2 * Math.PI / stageNum * i; // 각도 계산
+                    // 원형 배열의 반지름을 줄여 적들이 더 촘촘하게 배치되도록 하고, 적의 체력과 속도를 증가
+                    double angle = 2 * Math.PI / (stageNum + 2) * i; // 각도 계산
                     int centerX = 256; // 원의 중심
                     int centerY = -300;
-                    int radius = 100; // 원의 반지름
+                    int radius = 70; // 반지름을 더 줄임
                     int x = (int) (centerX + radius * Math.cos(angle));
                     int y = (int) (centerY + radius * Math.sin(angle));
-                    enemy = new Enemy(x, y, 50, enemySprite3, null);
+                    enemy = new Enemy(x, y, 50 + stageNum * 40, enemySprite3, null);
                     break;
 
                 case 3: // 랜덤 위치
+                    // 랜덤 위치의 범위를 확장하고, 적의 체력과 이동 속도 증가
                     int randomX = random.nextInt(512 - 40); // 화면 너비 내에서 랜덤 X
                     int randomY = random.nextInt(200) - 300; // 화면 상단 위쪽에서 랜덤 Y
-                    enemy = new Enemy(randomX, randomY, 50, enemySprite4, null);
+                    enemy = new Enemy(randomX, randomY, 50 + stageNum * 40, enemySprite4, null);
                     break;
 
                 default: // 기본: 직선 배열
-                    enemy = new Enemy(50 + (i * 40), -100, 50, enemySprite1, null);
+                    enemy = new Enemy(50 + (i * 15), -100, 50 + stageNum * 40, enemySprite1, null);
             }
 
-            // 무기를 적에게 설정
-            Weapon enemyWeapon = new Weapon(enemy, weaponSprites1, 3, 5, 2, bulletFrames, 6);
+            // 무기를 강화 (적의 공격력과 발사 속도 증가)
+            Weapon enemyWeapon = new Weapon(enemy, weaponSprites1, 3 + stageNum * 4, 5 + stageNum * 5, 2, bulletFrames, 6);
             enemy.setWeapon(enemyWeapon);
             enemies.add(enemy);
+
         }
 
         // 목표 지점 초기화
